@@ -66,19 +66,18 @@ body {
   gap: 12px;
 }
 
-.brand-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
+.brand-logo-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 20% 0, #ffffff, #e5e7eb 22%, #ff2d6b 45%, #0f172a 90%);
-  color: var(--bg);
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.05em;
 }
+
+.brand-logo {
+  height: 32px;        /* ajustá si lo ves muy grande o chico */
+  width: auto;
+  display: block;
+}
+
 
 .brand-text {
   display: flex;
@@ -436,5 +435,6 @@ body {
 .info-card--hidden {
   display: none !important;
 }
+
 
 
