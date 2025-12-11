@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Info administrativa · Gran Berta Films</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="Información administrativa y de facturación de Gran Berta Films / Gran Berta S.R.L."
+  />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <!-- Fuente similar a la estética del sitio principal -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-mark">GB</div>
+        <div class="brand-text">
+          <span class="brand-title">Gran Berta Films</span>
+          <span class="brand-subtitle">Info administrativa</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="site-main">
+      <section class="hero">
+        <h1>Información administrativa y pagos</h1>
+        <p class="hero-text">
+          Acá está todo lo básico para facturación, contratos, garantías y contacto.
+        </p>
+
+        <div class="search-block">
+          <label for="searchInput" class="search-label">
+            Buscar dentro de la información
+          </label>
+          <div class="search-wrapper">
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Ej: facturas, garantías, cheques, efectivo..."
+              autocomplete="off"
+            />
+            <span class="search-icon" aria-hidden="true">🔍</span>
+          </div>
+          <p class="search-hint">
+            El buscador filtra las secciones según el texto que escribas.
+          </p>
+        </div>
+      </section>
+
+      <section class="cards-section" aria-label="Secciones de información">
+        <div class="cards-grid">
+
+          <!-- DATOS PRODUCTORA -->
+          <article class="info-card" data-section-id="datos-productora">
+            <button class="info-card__button" type="button">
+              <div class="info-card__title-wrap">
+                <span class="info-card__title">Datos productora</span>
+                <span class="info-card__tag">Datos fiscales</span>
+              </div>
+              <span class="info-card__icon" aria-hidden="true">↗</span>
+            </button>
+
+            <!-- Texto completo (para modal + buscador) -->
+            <div class="info-card__fulltext">
+              <h2>DATOS PRODUCTORA</h2>
+              <ul>
+                <li>Razón Social: Gran Berta S.R.L.</li>
+                <li>CUIT: 33715736549</li>
+                <li>IVA: Responsable Inscripto</li>
+                <li>Domicilio: Mendoza 2364, Belgrano, CABA</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- CONTRATOS -->
+          <article class="info-card" data-section-id="contratos">
+            <button class="info-card__button" type="button">
+              <div class="info-card__title-wrap">
+                <span class="info-card__title">Contratos</span>
+                <span class="info-card__tag">Empresa &amp; representante legal</span>
+              </div>
+              <span class="info-card__icon" aria-hidden="true">↗</span>
+            </button>
+
+            <div class="info-card__fulltext">
+              <h2>CONTRATOS</h2>
+
+              <h3>Empresa</h3>
+              <ul>
+                <li>Razón Social: Gran Berta S.R.L.</li>
+                <li>CUIT: 33715736549</li>
+                <li>IVA: Responsable Inscripto</li>
+                <li>Domicilio: Mendoza 2364, Belgrano, CABA</li>
+              </ul>
+
+              <h3>Representante Legal</h3>
+              <ul>
+                <li>Nombre completo: Tomas Gonzalo Boetsch</li>
+                <li>DNI: 34553626</li>
+                <li>Domicilio: Teodoro García 2866, Colegiales, CABA</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- CRITERIOS PARA PAGOS DE FACTURAS -->
+          <article class="info-card" data-section-id="criterios-facturas">
+            <button class="info-card__button" type="button">
+              <div class="info-card__title-wrap">
+                <span class="info-card__title">Pagos de facturas</span>
+                <span class="info-card__tag">Criterios generales</span>
+              </div>
+              <span class="info-card__icon" aria-hidden="true">↗</span>
+            </button>
+
+            <div class="info-card__fulltext">
+              <h2>CRITERIOS PARA PAGOS DE FACTURAS</h2>
+              <p>
+                Solo se podrán pagar las facturas por transferencia desde la cuenta de la empresa
+                o con alguna tarjeta de la empresa. NO se pueden pagar facturas con efectivo.
+              </p>
+              <p>
+                Las facturas podrán ser A o C, y serán controladas en ARCA.
+              </p>
+            </div>
+          </article>
+
+          <!-- CASH -->
+          <article class="info-card" data-section-id="cash">
+            <button class="info-card__button" type="button">
+              <div class="info-card__title-wrap">
+                <span class="info-card__title">Cash (efectivo)</span>
+                <span class="info-card__tag">Gastos de rodaje</span>
+              </div>
+              <span class="info-card__icon" aria-hidden="true">↗</span>
+            </button>
+
+            <div class="info-card__fulltext">
+              <h2>CASH</h2>
+              <p>
+                Solo se podrán pagar en efectivo gastos menores que agilicen diferentes necesidades
+                de rodaje. Para gastos de 50 mil para arriba debemos pedir factura.
+              </p>
+            </div>
+          </article>
+
+          <!-- GARANTÍAS -->
+          <article class="info-card" data-section-id="garantias">
+            <button class="info-card__button" type="button">
+              <div class="info-card__title-wrap">
+                <span class="info-card__title">Garantías</span>
+                <span class="info-card__tag">Cheques digitales</span>
+              </div>
+              <span class="info-card__icon" aria-hidden="true">↗</span>
+            </button>
+
+            <div class="info-card__fulltext">
+              <h2>GARANTÍAS</h2>
+              <p>
+                Solicitar por mail datos del cheque requerido para garantía
+                (nombre y apellido, tipo de cheque, monto, concepto, si es en relación con una
+                factura adjuntar número y tipo).
+              </p>
+              <p>
+                Los cheques son digitales, se envían por mail.
+              </p>
+            </div>
+          </article>
+
+          <!-- CARGA DE FACTURAS -->
+          <article class="info-card" data-section-id="carga-facturas">
+            <button class="info-card__button" type="button">
+              <div class="info-card__title-wrap">
+                <span class="info-card__title">Carga de facturas</span>
+                <span class="info-card__tag">Google Drive</span>
+              </div>
+              <span class="info-card__icon" aria-hidden="true">↗</span>
+            </button>
+
+            <div class="info-card__fulltext">
+              <h2>CARGA DE FACTURAS</h2>
+              <p>
+                Todas las facturas deben ser cargadas en este link:
+              </p>
+              <p>
+                <a
+                  href="https://drive.google.com/drive/folders/17DYIPJJd5cDH4znF57xLwvVaOmruPHB3?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Carpeta de carga de facturas (Google Drive)
+                </a>
+              </p>
+            </div>
+          </article>
+
+          <!-- CONTACTO -->
+          <article class="info-card" data-section-id="contacto">
+            <button class="info-card__button" type="button">
+              <div class="info-card__title-wrap">
+                <span class="info-card__title">Contacto</span>
+                <span class="info-card__tag">Dudas y consultas</span>
+              </div>
+              <span class="info-card__icon" aria-hidden="true">↗</span>
+            </button>
+
+            <div class="info-card__fulltext">
+              <h2>CONTACTO</h2>
+              <p>
+                Por cualquier duda o consulta de estas áreas contactar a:
+              </p>
+              <ul>
+                <li>Teléfono: 1130741165</li>
+                <li>Nombre: Tomas Boetsch</li>
+              </ul>
+            </div>
+          </article>
+
+        </div>
+
+        <p class="cards-footnote">
+          Tip: hacé clic en cada tarjeta para abrir la ventana con la info completa y un botón
+          para copiar todo.
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Gran Berta S.R.L. · Uso interno</p>
+    </footer>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden></div>
+  <dialog class="modal" id="infoModal" aria-modal="true">
+    <header class="modal__header">
+      <h2 class="modal__title" id="modalTitle">Título</h2>
+      <button
+        type="button"
+        class="modal__close"
+        id="modalCloseBtn"
+        aria-label="Cerrar ventana"
+      >
+        ✕
+      </button>
+    </header>
+    <div class="modal__body" id="modalBody">
+      <!-- Contenido dinámico -->
+    </div>
+    <footer class="modal__footer">
+      <button type="button" class="btn-secondary" id="copyModalBtn">
+        Copiar todo
+      </button>
+      <button type="button" class="btn-primary" id="closeBottomBtn">
+        Cerrar
+      </button>
+    </footer>
+  </dialog>
+
+  <!-- Toast simple -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    Texto copiado al portapapeles
+  </div>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
