@@ -147,8 +147,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+    // Links internos: abrir otra sección desde dentro del contenido (p.ej. "Contacto")
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-open-section]");
+    if (!trigger) return;
+
+    const targetId = trigger.getAttribute("data-open-section");
+    if (!targetId) return;
+
+    const targetCard = document.querySelector(
+      `.info-card[data-section-id="${targetId}"]`
+    );
+    if (!targetCard) return;
+
+    // Cerramos el modal actual (si está abierto) y abrimos el de la sección destino
+    closeModal();
+    openModalFromCard(targetCard);
+  });
+
   searchInput.addEventListener("input", (ev) => {
     filtrarCards(ev.target.value);
   });
 });
+
 
