@@ -57,6 +57,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   modalBackdrop.addEventListener("click", closeModal);
 
+    // Cerrar el modal haciendo click fuera de la tarjeta
+  modal.addEventListener("click", (event) => {
+    // Cuando se hace click en el fondo del <dialog>, el target es el propio modal
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+
   document.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") {
       closeModal();
@@ -142,3 +151,4 @@ document.addEventListener("DOMContentLoaded", () => {
     filtrarCards(ev.target.value);
   });
 });
+
