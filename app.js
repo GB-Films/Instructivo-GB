@@ -122,7 +122,7 @@ function nubesBody(){
   const rows = NUBES.map((n, i) => `
     <div class="dataRow nubeRow" data-nube-area="${n.area}" data-nube-url="${escapeHtml(n.url)}">
       <div class="dataLeft">
-        <div class="dataKey">${escapeHtml(n.title)}</div>
+        <div class="dataKey nubeTitle">${escapeHtml(n.title)}</div>
         <div class="dataVal">${escapeHtml(n.url)}</div>
       </div>
       <button class="copyBtn" type="button" data-copylink="${i}">Copiar link</button>
@@ -564,7 +564,7 @@ function initNubesUI(){
     rows.forEach(r => {
       const area = r.getAttribute("data-nube-area");
       const show = (val === "Todos") || (area === val);
-      r.style.display = show ? "" : "none";
+      r.classList.toggle("collapsed", !show);
     });
   };
 

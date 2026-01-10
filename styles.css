@@ -508,3 +508,31 @@ pre.outVal{
 }
 
 .modalFooter.left{ justify-content:flex-start; }
+
+#modalKicker{ display:none; }
+
+/* Nubes: títulos con más relevancia */
+.nubeTitle{
+  color: var(--text);
+  font-size: 14.5px;
+  font-weight: 1000;
+  letter-spacing: .2px;
+}
+
+/* Nubes: colapsar desde abajo manteniendo borde superior */
+.nubeRow{
+  overflow: hidden;
+  transform-origin: top;
+  max-height: 260px;
+  transition: max-height .22s ease, opacity .22s ease, transform .22s ease, margin .22s ease, padding .22s ease, border-width .22s ease;
+}
+.nubeRow.collapsed{
+  max-height: 0;
+  opacity: 0;
+  transform: scaleY(0);
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-width: 0;
+  pointer-events: none;
+}
