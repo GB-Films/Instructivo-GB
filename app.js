@@ -561,7 +561,7 @@ function initNubesUI(){
   // Default
   setActive("Todos");
 }
-\n\n/* =========
+/* =========
    Datos empresa
 ========= */
 const COMPANY = [
