@@ -536,3 +536,8 @@ pre.outVal{
   border-width: 0;
   pointer-events: none;
 }
+
+.modalFooter.split{ justify-content: space-between; }
+
+/* Nubes: link sin negrita */
+.nubeRow .dataVal{ font-weight: 700; }

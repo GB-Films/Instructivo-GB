@@ -433,6 +433,7 @@ function openModal({ title, kicker, bodyHtml, primary, secondary, actionsAlign }
   modalBody.innerHTML = bodyHtml || "<p>Sin contenido.</p>";
 
   setupModalButtons(primary, secondary);
+  applyFooterLayout();
 
   overlay.classList.remove("hidden");
   overlay.setAttribute("aria-hidden", "false");
@@ -446,7 +447,26 @@ function closeModal(){
   document.body.style.overflow = "";
   modalBody.innerHTML = "";
   setupModalButtons(null, null);
+  if (modalFooter) modalFooter.classList.remove("left", "split");
   if (modalFooter) modalFooter.classList.remove("left");
+}
+
+function applyFooterLayout(){
+  if (!modalFooter) return;
+
+  const primaryVisible = !modalPrimary.classList.contains("hidden");
+  const secondaryVisible = !modalSecondary.classList.contains("hidden");
+
+  modalFooter.classList.remove("left", "split");
+
+  if (primaryVisible && secondaryVisible){
+    // Primary a la izquierda, Cerrar a la derecha
+    modalFooter.classList.add("split");
+  } else if (primaryVisible && !secondaryVisible){
+    modalFooter.classList.add("left");
+  } else {
+    // Solo cerrar / secundario: a la derecha (default)
+  }
 }
 
 function setupModalButtons(primary, secondary){
@@ -467,6 +487,8 @@ function setupModalButtons(primary, secondary){
     modalSecondary.classList.add("hidden");
     modalSecondary.onclick = null;
   }
+
+  applyFooterLayout();
 }
 
 /* =========
