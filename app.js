@@ -2,6 +2,12 @@
    Menú data-driven (fácil de editar)
 ========= */
 
+const LINKS = {
+  nda: "https://docs.google.com/document/d/1xo2ibL-DJaxytpSM6mqWRFiP-nLEkYTV/edit?usp=drive_link&ouid=101597232098541922085&rtpof=true&sd=true",
+  trabajo: "https://docs.google.com/document/d/12RAj-Tu5ec1F90jeAtAFhM2T2sFh0Lln/edit?usp=sharing&ouid=101597232098541922085&rtpof=true&sd=true",
+  ip: "https://docs.google.com/document/d/1EycBkBryI1VKB7CxSunkGGDcVeo9c6uN/edit?usp=sharing&ouid=101597232098541922085&rtpof=true&sd=true"
+};
+
 const MENU = {
   title: "Accesos rápidos",
   subtitle: "Elegí una sección para ver opciones y abrir información.",
@@ -16,9 +22,35 @@ const MENU = {
         title: "Instructivo Proveedores",
         subtitle: "Elegí una opción.",
         items: [
-          { id: "alta", title: "Alta como Proveedores", desc: "Paso a paso (placeholder por ahora).", badge: "Abrir", modal: { title: "Alta como Proveedores", kicker: "Proveedores", body: placeholderText("Alta como Proveedores") } },
-          { id: "contratos", title: "Contratos", desc: "Modelos, firma y flujo (placeholder).", badge: "Abrir", modal: { title: "Contratos", kicker: "Proveedores", body: placeholderText("Contratos") } },
-          { id: "facturacion", title: "Facturación", desc: "Requisitos y envío (placeholder).", badge: "Abrir", modal: { title: "Facturación", kicker: "Proveedores", body: placeholderText("Facturación") } },
+          {
+            id: "alta",
+            title: "Alta como Proveedores",
+            desc: "Paso a paso (placeholder por ahora).",
+            badge: "Abrir",
+            modal: { title: "Alta como Proveedores", kicker: "Proveedores", body: placeholderText("Alta como Proveedores") }
+          },
+          {
+            id: "contratos",
+            title: "Contratos",
+            desc: "Acceso directo a documentos en Drive.",
+            badge: "Ver",
+            children: {
+              title: "Contratos",
+              subtitle: "Elegí un documento para abrir en Google Drive.",
+              items: [
+                { id: "ct", title: "Contrato de Trabajo", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.trabajo },
+                { id: "nda", title: "NDA", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.nda },
+                { id: "cip", title: "Cesión de IP", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.ip },
+              ]
+            }
+          },
+          {
+            id: "facturacion",
+            title: "Facturación",
+            desc: "Requisitos y envío (placeholder).",
+            badge: "Abrir",
+            modal: { title: "Facturación", kicker: "Proveedores", body: placeholderText("Facturación") }
+          },
         ]
       }
     },
@@ -98,20 +130,23 @@ function renderCurrent(){
 }
 
 function onItemClick(item){
-  // Caso: abre submenú
+  if (item.url){
+    window.open(item.url, "_blank", "noopener,noreferrer");
+    showToast("Abierto en Google Drive");
+    return;
+  }
+
   if (item.children){
     stack.push(item.children);
     renderCurrent();
     return;
   }
 
-  // Caso: acción datos empresa
   if (item.action === "companyData"){
     openCompanyDataModal();
     return;
   }
 
-  // Caso: modal genérico
   if (item.modal){
     openModal({
       title: item.modal.title,
@@ -121,7 +156,6 @@ function onItemClick(item){
     return;
   }
 
-  // Fallback
   openModal({
     title: item.title,
     kicker: "Info",
@@ -152,11 +186,7 @@ function closeModal(){
   setupModalButtons(null, null);
 }
 
-/* =========
-   Botones del modal
-========= */
 function setupModalButtons(primary, secondary){
-  // Primary
   if (primary && typeof primary.onClick === "function"){
     modalPrimary.classList.remove("hidden");
     modalPrimary.textContent = primary.label || "Acción";
@@ -166,7 +196,6 @@ function setupModalButtons(primary, secondary){
     modalPrimary.onclick = null;
   }
 
-  // Secondary
   if (secondary && typeof secondary.onClick === "function"){
     modalSecondary.classList.remove("hidden");
     modalSecondary.textContent = secondary.label || "Cerrar";
@@ -214,13 +243,9 @@ function openCompanyDataModal(){
         showToast("Copiado: todos los datos");
       }
     },
-    secondary: {
-      label: "Cerrar",
-      onClick: closeModal
-    }
+    secondary: { label: "Cerrar", onClick: closeModal }
   });
 
-  // Delegación de eventos para botones copiar
   modalBody.querySelectorAll("[data-copy]").forEach(btn => {
     btn.addEventListener("click", async (e) => {
       const i = Number(e.currentTarget.getAttribute("data-copy"));
@@ -238,7 +263,7 @@ function placeholderText(sectionTitle){
   return `
     <p><strong>${escapeHtml(sectionTitle)}</strong></p>
     <p>Este contenido es de prueba por ahora. Acá después pegamos el instructivo real, links, PDFs o lo que necesites.</p>
-    <p style="color: #9aa7c3; margin-top: 10px;">(Sí, es placeholder. Mejor eso que inventar cosas y después llorar.)</p>
+    <p style="color: #9aa7c3; margin-top: 10px;">(Sí, es placeholder. Mejor esto que inventar y después llorar.)</p>
   `;
 }
 
@@ -269,7 +294,6 @@ async function copyText(text){
   try{
     await navigator.clipboard.writeText(text);
   } catch {
-    // Fallback viejo pero útil
     const ta = document.createElement("textarea");
     ta.value = text;
     ta.style.position = "fixed";
@@ -328,7 +352,7 @@ document.addEventListener("keydown", (e) => {
 ========= */
 renderCurrent();
 
-// Soporte copiar links placeholder (si abrís el modal de nubes)
+// Copiar links placeholder (nubes)
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest("[data-copylink]");
   if (!btn) return;

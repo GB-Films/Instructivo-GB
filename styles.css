@@ -4,8 +4,8 @@
   --card:#0f172aee;
   --stroke:#ffffff1a;
   --text:#e8edf7;
-  --muted:#c9d2e6;   /* subimos contraste */
-  --muted2:#9aa7c3;  /* subimos contraste */
+  --muted:#c9d2e6;
+  --muted2:#9aa7c3;
   --accent:#7c5cff;
   --accent2:#2dd4bf;
   --danger:#ff4d6d;
@@ -41,37 +41,24 @@ body{
   z-index:10;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding:16px 20px;
+  justify-content:center;
+  padding:14px 18px;
   border-bottom:1px solid var(--stroke);
   backdrop-filter: blur(10px);
   background: rgba(10,15,30,.55);
 }
 
-.brand{
-  display:flex;
-  gap:12px;
-  align-items:center;
+.topTitle{
+  font-weight: 950;
+  letter-spacing: .9px;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #ffffff;
 }
-
-.logo{
-  width:40px;height:40px;
-  display:grid;place-items:center;
-  border-radius:12px;
-  background: linear-gradient(135deg, rgba(124,92,255,.9), rgba(45,212,191,.65));
-  box-shadow: 0 10px 30px rgba(124,92,255,.25);
-  font-weight:800;
-  letter-spacing:.5px;
-}
-
-.brandTitle{ font-weight:800; font-size:15px; line-height:1.1; }
-.brandSub{ color:var(--muted2); font-size:12px; margin-top:2px; }
-
-.topActions{ display:flex; gap:10px; }
 
 .container{
   max-width: 980px;
-  margin: 26px auto 44px;
+  margin: 22px auto 44px;
   padding: 0 18px;
 }
 
@@ -87,6 +74,7 @@ body{
   padding: 22px 22px 14px;
   display:flex;
   justify-content:space-between;
+  align-items:flex-start;
   gap:14px;
   border-bottom:1px solid var(--stroke);
 }
@@ -102,7 +90,13 @@ p{
   font-size: 14px;
 }
 
-.crumbs{ display:flex; align-items:flex-start; }
+.crumbs{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
 
 .grid{
   padding: 18px 22px 22px;
@@ -116,23 +110,23 @@ p{
 }
 @media (max-width: 520px){
   .grid{ grid-template-columns: 1fr; }
-  .topbar{ padding:14px 14px; }
-  .container{ margin-top:18px; }
+  .topbar{ padding:12px 14px; }
+  .container{ margin-top:16px; }
 }
 
 .tile{
-  position:relative;
-  border:1px solid rgba(255,255,255,.16); /* un toque más visible */
+  border:1px solid rgba(255,255,255,.16);
   border-radius: 16px;
-  background: rgba(255,255,255,.06);      /* más contraste */
+  background: rgba(255,255,255,.06);
   padding: 16px 14px;
   cursor:pointer;
   transition: transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
-  min-height: 102px;
+  min-height: 112px;
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:12px;
   outline:none;
+  text-align:left;
 }
 
 .tile:hover{
@@ -145,19 +139,30 @@ p{
 
 .tileTop{
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   justify-content:space-between;
-  gap:10px;
+  gap:12px;
 }
+
+.tileTitle{
+  font-weight: 950;
+  font-size: 16px;
+  letter-spacing: -.2px;
+  color: #ffffff;
+  text-shadow: 0 1px 0 rgba(0,0,0,.45);
+  line-height:1.15;
+}
+
 .badge{
   font-size:12px;
   padding:6px 10px;
   border-radius: 999px;
   background: rgba(124,92,255,.18);
   border:1px solid rgba(124,92,255,.30);
-  color: #efeaff; /* más blanco */
+  color: #efeaff;
   white-space:nowrap;
-  font-weight: 800;
+  font-weight: 900;
+  flex: 0 0 auto;
 }
 .badge.alt{
   background: rgba(45,212,191,.14);
@@ -165,17 +170,13 @@ p{
   color:#eafffb;
 }
 
-.tileTitle{
-  font-weight: 900;
-  font-size: 16px;            /* más grande */
-  letter-spacing: -.2px;
-  color: #ffffff;             /* fuerza contraste */
-  text-shadow: 0 1px 0 rgba(0,0,0,.45);
-}
 .tileDesc{
-  color: #d3dcee;             /* más legible que muted */
+  color: #d3dcee;
   font-size: 13.5px;
   line-height:1.35;
+  padding-left: 12px;
+  border-left: 2px solid rgba(255,255,255,.18);
+  margin-left: 2px;
 }
 
 .cardFooter{
@@ -277,7 +278,7 @@ p{
 .btn.primary{
   background: linear-gradient(135deg, rgba(124,92,255,.92), rgba(45,212,191,.55));
   border-color: rgba(255,255,255,.16);
-  font-weight: 900;
+  font-weight: 950;
 }
 
 .dataGrid{
@@ -301,7 +302,7 @@ p{
   margin-bottom: 2px;
 }
 .dataVal{
-  font-weight: 900;
+  font-weight: 950;
   font-size: 14px;
 }
 .dataLeft{ display:flex; flex-direction:column; min-width:0; }
@@ -315,7 +316,7 @@ p{
   border-radius: 12px;
   cursor:pointer;
   white-space:nowrap;
-  font-weight: 800;
+  font-weight: 900;
 }
 .copyBtn:hover{ background: rgba(45,212,191,.14); }
 
