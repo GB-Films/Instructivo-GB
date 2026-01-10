@@ -10,7 +10,10 @@ const LINKS = {
 
   // Alta Proveedor
   alta_personas: "https://forms.clickup.com/31001374/f/xj2ry-9334/19VWKHJ9W4BQ4BDYG8",
-  alta_empresas: "https://forms.clickup.com/31001374/f/xj2ry-14494/9ZJC7FHN71JZ5XKA0V"
+  alta_empresas: "https://forms.clickup.com/31001374/f/xj2ry-14494/9ZJC7FHN71JZ5XKA0V",
+
+  // Modelo rendición
+  modelo_rendicion: "https://docs.google.com/spreadsheets/d/1cfCJH5zLwb6QLa_gmQaCUK-dzQaUOn7A-Tr2V_--IXk/edit?usp=sharing"
 };
 
 function altaProveedorBody(){
@@ -27,6 +30,27 @@ function facturacionBody(){
   `;
 }
 
+function rendicionBody(){
+  return `
+    <p>Se debera hacer la rendicion lo mas detallada posible utilizando este modelo de Rendición. Para el envio del mail con la rendición, revisar <button type="button" class="linkLike" data-action="open-armado-mail">Armado de Mail</button></p>
+  `;
+}
+
+/* =========
+   Reusable modals
+========= */
+function armadoMailModal(){
+  return {
+    title: "Armado Mail Rendición",
+    kicker: "Producción",
+    body: placeholderText("Armado Mail Rendición"),
+    secondary: { label: "Cerrar", onClick: closeModal }
+  };
+}
+
+/* =========
+   Menu
+========= */
 const MENU = {
   items: [
     {
@@ -100,7 +124,6 @@ const MENU = {
               primary: {
                 label: "Datos Empresa",
                 onClick: () => {
-                  // Reutiliza la misma ventana de Datos Empresa
                   closeModal();
                   openCompanyDataModal();
                 }
@@ -119,9 +142,33 @@ const MENU = {
       badgeAlt: true,
       children: {
         items: [
-          { id: "rendicion", title: "Como Realizar Rendición", desc: "Checklist (placeholder).", badge: "Abrir", modal: { title: "Como Realizar Rendición", kicker: "Producción", body: placeholderText("Como Realizar Rendición") } },
-          { id: "mail", title: "Armado Mail Rendición", desc: "Plantilla (placeholder).", badge: "Abrir", modal: { title: "Armado Mail Rendición", kicker: "Producción", body: placeholderText("Armado Mail Rendición") } },
-          { id: "nubes", title: "Links a Nubes", desc: "Accesos rápidos (placeholder).", badge: "Abrir", modal: { title: "Links a Nubes", kicker: "Producción", body: placeholderLinks() } },
+          {
+            id: "rendicion",
+            title: "Como Realizar Rendición",
+            desc: "Modelo y pasos de envío.",
+            badge: "Abrir",
+            modal: {
+              title: "Como Realizar Rendición",
+              kicker: "Producción",
+              body: rendicionBody(),
+              primary: { label: "Modelo", onClick: () => openExternal(LINKS.modelo_rendicion, "Modelo de Rendición") },
+              secondary: { label: "Cerrar", onClick: closeModal }
+            }
+          },
+          {
+            id: "mail",
+            title: "Armado Mail Rendición",
+            desc: "Plantilla (placeholder).",
+            badge: "Abrir",
+            modal: armadoMailModal()
+          },
+          {
+            id: "nubes",
+            title: "Links a Nubes",
+            desc: "Accesos rápidos (placeholder).",
+            badge: "Abrir",
+            modal: { title: "Links a Nubes", kicker: "Producción", body: placeholderLinks(), secondary: { label: "Cerrar", onClick: closeModal } }
+          },
         ]
       }
     },
@@ -420,6 +467,28 @@ overlay.addEventListener("click", (e) => {
 });
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeModal();
+});
+
+/* =========
+   Inline actions inside modal body
+========= */
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action]");
+  if (!btn) return;
+
+  const action = btn.getAttribute("data-action");
+  if (action === "open-armado-mail"){
+    // Abrir la ventana del botón "Armado Mail Rendición"
+    closeModal();
+    const m = armadoMailModal();
+    openModal({
+      title: m.title,
+      kicker: m.kicker,
+      bodyHtml: m.body,
+      primary: m.primary,
+      secondary: m.secondary
+    });
+  }
 });
 
 /* =========
