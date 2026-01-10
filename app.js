@@ -106,7 +106,7 @@ function armadoMailBody(){
       </div>
     </div>
   `;
-
+}
 
 function nubesBody(){
   const chips = ["Todos", "Produccion", "Arte", "Vestuario"].map((c, i) => `
