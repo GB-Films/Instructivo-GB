@@ -21,6 +21,12 @@ const EMAILS = {
   to2: "amecible@gmail.com"
 };
 
+const NUBES = [
+  { area: "Produccion", title: "Producción", url: "https://drive.google.com/drive/folders/1aAWTCSMtZy5eHfsagGcj3_WlOHFKofu8?usp=sharing" },
+  { area: "Arte", title: "Arte", url: "https://drive.google.com/drive/folders/1ualxM8uxkmJOGUjA9hT44uN6mlach3dO?usp=sharing" },
+  { area: "Vestuario", title: "Vestuario", url: "https://drive.google.com/drive/folders/1Wdu8oUGQtzLgqyoNtH_Xczo0vwz92RZs?usp=sharing" },
+];
+
 function altaProveedorBody(){
   return `
     <p>Completar el alta proveedor. Presione el boton <strong>"Alta"</strong> para completar</p>
@@ -100,6 +106,29 @@ function armadoMailBody(){
       </div>
     </div>
   `;
+
+
+function nubesBody(){
+  const chips = ["Todos", "Produccion", "Arte", "Vestuario"].map((c, i) => `
+    <button type="button" class="chip ${i === 0 ? "active" : ""}" data-nube-filter="${c}">${c}</button>
+  `).join("");
+
+  const rows = NUBES.map((n, i) => `
+    <div class="dataRow nubeRow" data-nube-area="${n.area}" data-nube-url="${escapeHtml(n.url)}">
+      <div class="dataLeft">
+        <div class="dataKey">${escapeHtml(n.title)}</div>
+        <div class="dataVal">${escapeHtml(n.url)}</div>
+      </div>
+      <button class="copyBtn" type="button" data-copylink="${i}">Copiar link</button>
+    </div>
+  `).join("");
+
+  return `
+    <p>Accesos a nubes por área. Filtrá y entrá directo, o copiá el link.</p>
+    <div class="chipBar">${chips}</div>
+    <div class="dataGrid" id="nubesGrid">${rows}</div>
+  `;
+}
 }
 
 /* =========
@@ -219,9 +248,9 @@ const MENU = {
           {
             id: "nubes",
             title: "Links a Nubes",
-            desc: "Accesos rápidos (placeholder).",
+            desc: "Carpetas por área + filtros.",
             badge: "Abrir",
-            modal: { title: "Links a Nubes", kicker: "Producción", body: placeholderLinks(), secondary: { label: "Cerrar", onClick: closeModal } }
+            action: "nubes"
           },
         ]
       }
@@ -333,6 +362,11 @@ function onItemClick(item){
 
   if (item.action === "armadoMail"){
     openArmadoMailModal();
+    return;
+  }
+
+  if (item.action === "nubes"){
+    openNubesModal();
     return;
   }
 
@@ -481,6 +515,53 @@ function initArmadoMailUI(){
 }
 
 /* =========
+   Links a Nubes (UX)
+========= */
+function openNubesModal(){
+  openModal({
+    title: "Links a Nubes",
+    kicker: "Producción",
+    bodyHtml: nubesBody(),
+    secondary: { label: "Cerrar", onClick: closeModal }
+  });
+  initNubesUI();
+}
+
+function initNubesUI(){
+  const chips = Array.from(modalBody.querySelectorAll("[data-nube-filter]"));
+  const rows = Array.from(modalBody.querySelectorAll("[data-nube-area]"));
+
+  const setActive = (val) => {
+    chips.forEach(c => c.classList.toggle("active", c.getAttribute("data-nube-filter") === val));
+    rows.forEach(r => {
+      const area = r.getAttribute("data-nube-area");
+      const show = (val === "Todos") || (area === val);
+      r.style.display = show ? "" : "none";
+    });
+  };
+
+  // Click chips
+  chips.forEach(c => {
+    c.addEventListener("click", () => setActive(c.getAttribute("data-nube-filter")));
+  });
+
+  // Click row -> open link
+  rows.forEach(r => {
+    r.addEventListener("click", () => {
+      const url = r.getAttribute("data-nube-url");
+      if (url) openExternal(url, "Nube");
+    });
+  });
+
+  // Stop propagation on copy buttons so it doesn't open the link
+  modalBody.querySelectorAll("[data-copylink]").forEach(btn => {
+    btn.addEventListener("click", (e) => e.stopPropagation());
+  });
+
+  // Default
+  setActive("Todos");
+}
+\n\n/* =========
    Datos empresa
 ========= */
 const COMPANY = [

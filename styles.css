@@ -472,3 +472,36 @@ pre.outVal{
   opacity: .55;
   cursor: not-allowed;
 }
+
+
+/* Filter chips (Links a Nubes) */
+.chipBar{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.chip{
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 950;
+  font-size: 12.5px;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+.chip:hover{ background: rgba(255,255,255,.06); transform: translateY(-1px); }
+.chip.active{
+  background: rgba(124,92,255,.16);
+  border-color: rgba(124,92,255,.32);
+}
+.nubeRow{
+  cursor:pointer;
+}
+.nubeRow:hover{
+  border-color: rgba(45,212,191,.30);
+  background: rgba(255,255,255,.06);
+}
