@@ -16,6 +16,11 @@ const LINKS = {
   modelo_rendicion: "https://docs.google.com/spreadsheets/d/1cfCJH5zLwb6QLa_gmQaCUK-dzQaUOn7A-Tr2V_--IXk/edit?usp=sharing"
 };
 
+const EMAILS = {
+  to1: "tomas@granberta.com",
+  to2: "amecible@gmail.com"
+};
+
 function altaProveedorBody(){
   return `
     <p>Completar el alta proveedor. Presione el boton <strong>"Alta"</strong> para completar</p>
@@ -36,16 +41,65 @@ function rendicionBody(){
   `;
 }
 
-/* =========
-   Reusable modals
-========= */
-function armadoMailModal(){
-  return {
-    title: "Armado Mail Rendición",
-    kicker: "Producción",
-    body: placeholderText("Armado Mail Rendición"),
-    secondary: { label: "Cerrar", onClick: closeModal }
-  };
+function armadoMailBody(){
+  // escapeHtml está hoisted (function declaration), así que se puede usar acá.
+  return `
+    <p>Completá estos datos y copiá el <strong>Asunto</strong> y el <strong>cuerpo</strong> del mail.</p>
+
+    <div class="formGrid">
+      <div class="field" id="amFieldProject">
+        <div class="fieldLabel">Proyecto</div>
+        <select class="control" id="amProject">
+          <option value="LA CASONA">LA CASONA</option>
+          <option value="JUBILADA Y PELIGROSA">JUBILADA Y PELIGROSA</option>
+        </select>
+      </div>
+
+      <div class="field" id="amFieldArea">
+        <div class="fieldLabel">Área</div>
+        <select class="control" id="amArea">
+          <option value="Producción">Producción</option>
+          <option value="Arte">Arte</option>
+          <option value="Vestuario">Vestuario</option>
+          <option value="Legales">Legales</option>
+        </select>
+      </div>
+
+      <div class="field" id="amFieldName">
+        <div class="fieldLabel">Nombre (quien rinde)</div>
+        <input class="control" id="amName" type="text" placeholder="Nombre y Apellido" autocomplete="name" />
+      </div>
+    </div>
+
+    <div id="amHint" class="hint warn hidden">Cargá el nombre para que el asunto quede completo.</div>
+
+    <div class="outGrid">
+      <div class="outCard">
+        <div class="outHeader">
+          <div>
+            <div class="outK">Asunto</div>
+            <div id="amSubject" class="outVal mono"></div>
+          </div>
+          <button class="copyBtn" type="button" id="amCopySubject">Copiar</button>
+        </div>
+      </div>
+
+      <div class="outCard">
+        <div class="outHeader">
+          <div style="min-width:0">
+            <div class="outK">Cuerpo</div>
+            <pre id="amBody" class="outVal"></pre>
+          </div>
+          <button class="copyBtn" type="button" id="amCopyBody">Copiar</button>
+        </div>
+      </div>
+
+      <div class="recRow">
+        <button class="copyBtn" type="button" id="amCopyTo">Copiar mails</button>
+        <div class="recDesc">Copiar a ${escapeHtml(EMAILS.to1)} y ${escapeHtml(EMAILS.to2)}</div>
+      </div>
+    </div>
+  `;
 }
 
 /* =========
@@ -158,9 +212,9 @@ const MENU = {
           {
             id: "mail",
             title: "Armado Mail Rendición",
-            desc: "Plantilla (placeholder).",
+            desc: "Generador de asunto + cuerpo.",
             badge: "Abrir",
-            modal: armadoMailModal()
+            action: "armadoMail"
           },
           {
             id: "nubes",
@@ -277,6 +331,11 @@ function onItemClick(item){
     return;
   }
 
+  if (item.action === "armadoMail"){
+    openArmadoMailModal();
+    return;
+  }
+
   if (item.modal){
     openModal({
       title: item.modal.title,
@@ -291,7 +350,8 @@ function onItemClick(item){
   openModal({
     title: item.title,
     kicker: "Info",
-    bodyHtml: placeholderText(item.title)
+    bodyHtml: placeholderText(item.title),
+    secondary: { label: "Cerrar", onClick: closeModal }
   });
 }
 
@@ -337,6 +397,87 @@ function setupModalButtons(primary, secondary){
     modalSecondary.classList.add("hidden");
     modalSecondary.onclick = null;
   }
+}
+
+/* =========
+   Armado Mail (UX)
+========= */
+function openArmadoMailModal(){
+  openModal({
+    title: "Armado Mail Rendición",
+    kicker: "Producción",
+    bodyHtml: armadoMailBody(),
+    secondary: { label: "Cerrar", onClick: closeModal }
+  });
+  initArmadoMailUI();
+}
+
+function initArmadoMailUI(){
+  const elProject = modalBody.querySelector("#amProject");
+  const elArea = modalBody.querySelector("#amArea");
+  const elName = modalBody.querySelector("#amName");
+
+  const fieldName = modalBody.querySelector("#amFieldName");
+  const hint = modalBody.querySelector("#amHint");
+
+  const outSubject = modalBody.querySelector("#amSubject");
+  const outBody = modalBody.querySelector("#amBody");
+
+  const btnCopySubject = modalBody.querySelector("#amCopySubject");
+  const btnCopyBody = modalBody.querySelector("#amCopyBody");
+  const btnCopyTo = modalBody.querySelector("#amCopyTo");
+
+  if (!elProject || !elArea || !elName || !outSubject || !outBody || !btnCopySubject || !btnCopyBody || !btnCopyTo) return;
+
+  const compute = () => {
+    const project = elProject.value;
+    const area = elArea.value;
+    const name = (elName.value || "").trim();
+
+    const subject = `${area} - ${project} - ${name || "[Nombre]"}`;
+    const body = `Dejo en este mail la siguiente rendición de ${area}:\n\nMuchas gracias`;
+
+    outSubject.textContent = subject;
+    outBody.textContent = body;
+
+    const ok = name.length > 0;
+    fieldName?.classList.toggle("invalid", !ok);
+    hint?.classList.toggle("hidden", ok);
+    btnCopySubject.disabled = !ok;
+  };
+
+  compute();
+
+  const listen = () => compute();
+  elProject.addEventListener("change", listen);
+  elArea.addEventListener("change", listen);
+  elName.addEventListener("input", listen);
+
+  btnCopySubject.addEventListener("click", async () => {
+    await copyText(outSubject.textContent);
+    showToast("Copiado: asunto");
+  });
+
+  btnCopyBody.addEventListener("click", async () => {
+    await copyText(outBody.textContent);
+    showToast("Copiado: cuerpo");
+  });
+
+  btnCopyTo.addEventListener("click", async () => {
+    await copyText(`${EMAILS.to1}, ${EMAILS.to2}`);
+    showToast("Copiado: mails");
+  });
+
+  // Enter -> copiar asunto si está OK
+  elName.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !btnCopySubject.disabled){
+      e.preventDefault();
+      btnCopySubject.click();
+    }
+  });
+
+  // Autofocus al nombre
+  setTimeout(() => elName.focus(), 50);
 }
 
 /* =========
@@ -478,16 +619,8 @@ document.addEventListener("click", (e) => {
 
   const action = btn.getAttribute("data-action");
   if (action === "open-armado-mail"){
-    // Abrir la ventana del botón "Armado Mail Rendición"
     closeModal();
-    const m = armadoMailModal();
-    openModal({
-      title: m.title,
-      kicker: m.kicker,
-      bodyHtml: m.body,
-      primary: m.primary,
-      secondary: m.secondary
-    });
+    openArmadoMailModal();
   }
 });
 
