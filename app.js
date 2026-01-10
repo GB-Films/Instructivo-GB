@@ -129,7 +129,6 @@ function nubesBody(){
     <div class="dataGrid" id="nubesGrid">${rows}</div>
   `;
 }
-}
 
 /* =========
    Menu
