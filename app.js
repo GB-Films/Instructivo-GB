@@ -43,7 +43,7 @@ function facturacionBody(){
 
 function rendicionBody(){
   return `
-    <p>Se debera hacer la rendicion lo mas detallada posible utilizando este modelo de Rendición. Para el envio del mail con la rendición, revisar <button type="button" class="linkLike" data-action="open-armado-mail">Armado de Mail</button></p>
+    <p>Se debera hacer la rendicion lo mas detallada posible utilizando este modelo de Rendición. Para el envio del mail con la rendición, revisar <button type="button" class="linkLike" data-action="open-armado-mail">Comunicacion por Mail</button></p>
   `;
 
 }
@@ -51,7 +51,7 @@ function rendicionBody(){
 function garantiasBody(){
   return `
     <p>Las garantias que puedan solicitar los proveedores seran entregadas mediante <strong>cheque electronico</strong>.</p>
-    <p>Enviar mail mediante <button type="button" class="linkLike" data-action="open-armado-mail">Armado Mail Rendicion</button> y colocar en el cuerpo del mail el pedido lo mas detallado posible, sobretodo el monto, Razon social y CUIT de la empresa o persona.</p>
+    <p>Enviar mail mediante <button type="button" class="linkLike" data-action="open-armado-mail">Comunicacion por Mail</button> y colocar en el cuerpo del mail el pedido lo mas detallado posible, sobretodo el monto, Razon social y CUIT de la empresa o persona.</p>
   `;
 }
 
@@ -103,16 +103,6 @@ function armadoMailBody(){
             <div id="amSubject" class="outVal mono"></div>
           </div>
           <button class="copyBtn" type="button" id="amCopySubject">Copiar</button>
-        </div>
-      </div>
-
-      <div class="outCard">
-        <div class="outHeader">
-          <div style="min-width:0">
-            <div class="outK">Cuerpo</div>
-            <pre id="amBody" class="outVal"></pre>
-          </div>
-          <button class="copyBtn" type="button" id="amCopyBody">Copiar</button>
         </div>
       </div>
 
@@ -174,9 +164,10 @@ const MENU = {
                   badgeAlt: true,
                   modal: {
                     title: "Alta Personas",
+                    actionsAlign: "left",
                     kicker: "Proveedores",
                     body: altaProveedorBody(),
-                    primary: { label: "Alta", onClick: () => openExternal(LINKS.alta_personas, "Formulario Alta Personas") },
+                    primary: { label: "ALTA", onClick: () => openExternal(LINKS.alta_personas, "Formulario Alta Personas") },
                     secondary: { label: "Cerrar", onClick: closeModal }
                   }
                 },
@@ -188,9 +179,10 @@ const MENU = {
                   badgeAlt: true,
                   modal: {
                     title: "Alta Empresas",
+                    actionsAlign: "left",
                     kicker: "Proveedores",
                     body: altaProveedorBody(),
-                    primary: { label: "Alta", onClick: () => openExternal(LINKS.alta_empresas, "Formulario Alta Empresas") },
+                    primary: { label: "ALTA", onClick: () => openExternal(LINKS.alta_empresas, "Formulario Alta Empresas") },
                     secondary: { label: "Cerrar", onClick: closeModal }
                   }
                 }
@@ -217,10 +209,11 @@ const MENU = {
             badge: "Abrir",
             modal: {
               title: "Facturación",
+                    actionsAlign: "left",
               kicker: "Proveedores",
               body: facturacionBody(),
               primary: {
-                label: "Datos Empresa",
+                label: "DATOS EMPRESA",
                 onClick: () => {
                   closeModal();
                   openCompanyDataModal();
@@ -247,16 +240,17 @@ const MENU = {
             badge: "Abrir",
             modal: {
               title: "Como Realizar Rendición",
+                    actionsAlign: "left",
               kicker: "Producción",
               body: rendicionBody(),
-              primary: { label: "Modelo", onClick: () => openExternal(LINKS.modelo_rendicion, "Modelo de Rendición") },
+              primary: { label: "MODELO", onClick: () => openExternal(LINKS.modelo_rendicion, "Modelo de Rendición") },
               secondary: { label: "Cerrar", onClick: closeModal }
             }
           },
           {
             id: "mail",
-            title: "Armado Mail Rendición",
-            desc: "Generador de asunto + cuerpo.",
+            title: "Comunicacion por Mail",
+            desc: "Generador de asunto.",
             badge: "Abrir",
             action: "armadoMail"
           },
@@ -318,6 +312,7 @@ const modalKicker = document.getElementById("modalKicker");
 const modalBody = document.getElementById("modalBody");
 const modalPrimary = document.getElementById("modalPrimary");
 const modalSecondary = document.getElementById("modalSecondary");
+const modalFooter = document.querySelector(".modalFooter");
 const toast = document.getElementById("toast");
 
 /**
@@ -415,7 +410,8 @@ function onItemClick(item){
       kicker: item.modal.kicker,
       bodyHtml: item.modal.body,
       primary: item.modal.primary,
-      secondary: item.modal.secondary
+      secondary: item.modal.secondary,
+      actionsAlign: item.modal.actionsAlign
     });
     return;
   }
@@ -431,7 +427,7 @@ function onItemClick(item){
 /* =========
    Modal
 ========= */
-function openModal({ title, kicker, bodyHtml, primary, secondary }){
+function openModal({ title, kicker, bodyHtml, primary, secondary, actionsAlign }){
   modalTitle.textContent = title || "Detalle";
   modalKicker.textContent = kicker || "Detalle";
   modalBody.innerHTML = bodyHtml || "<p>Sin contenido.</p>";
@@ -450,6 +446,7 @@ function closeModal(){
   document.body.style.overflow = "";
   modalBody.innerHTML = "";
   setupModalButtons(null, null);
+  if (modalFooter) modalFooter.classList.remove("left");
 }
 
 function setupModalButtons(primary, secondary){
@@ -477,9 +474,10 @@ function setupModalButtons(primary, secondary){
 ========= */
 function openArmadoMailModal(){
   openModal({
-    title: "Armado Mail Rendición",
+    title: "Comunicacion por Mail",
     kicker: "Producción",
     bodyHtml: armadoMailBody(),
+    actionsAlign: "left",
     secondary: { label: "Cerrar", onClick: closeModal }
   });
   initArmadoMailUI();
@@ -494,13 +492,11 @@ function initArmadoMailUI(){
   const hint = modalBody.querySelector("#amHint");
 
   const outSubject = modalBody.querySelector("#amSubject");
-  const outBody = modalBody.querySelector("#amBody");
 
   const btnCopySubject = modalBody.querySelector("#amCopySubject");
-  const btnCopyBody = modalBody.querySelector("#amCopyBody");
   const btnCopyTo = modalBody.querySelector("#amCopyTo");
 
-  if (!elProject || !elArea || !elName || !outSubject || !outBody || !btnCopySubject || !btnCopyBody || !btnCopyTo) return;
+  if (!elProject || !elArea || !elName || !outSubject || !btnCopySubject || !btnCopyTo) return;
 
   const compute = () => {
     const project = elProject.value;
@@ -508,10 +504,8 @@ function initArmadoMailUI(){
     const name = (elName.value || "").trim();
 
     const subject = `${area} - ${project} - ${name || "[Nombre]"}`;
-    const body = `Dejo en este mail la siguiente rendición de ${area}:\n\nMuchas gracias`;
 
     outSubject.textContent = subject;
-    outBody.textContent = body;
 
     const ok = name.length > 0;
     fieldName?.classList.toggle("invalid", !ok);
@@ -529,11 +523,6 @@ function initArmadoMailUI(){
   btnCopySubject.addEventListener("click", async () => {
     await copyText(outSubject.textContent);
     showToast("Copiado: asunto");
-  });
-
-  btnCopyBody.addEventListener("click", async () => {
-    await copyText(outBody.textContent);
-    showToast("Copiado: cuerpo");
   });
 
   btnCopyTo.addEventListener("click", async () => {
