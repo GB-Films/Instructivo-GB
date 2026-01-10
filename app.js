@@ -21,8 +21,6 @@ function altaProveedorBody(){
 }
 
 const MENU = {
-  title: "",
-  subtitle: "",
   items: [
     {
       id: "proveedores",
@@ -31,8 +29,6 @@ const MENU = {
       badge: "Proveedores",
       badgeAlt: false,
       children: {
-        title: "",
-        subtitle: "",
         items: [
           {
             id: "alta",
@@ -40,8 +36,6 @@ const MENU = {
             desc: "Personas o Empresas.",
             badge: "Ver",
             children: {
-              title: "",
-              subtitle: "",
               items: [
                 {
                   id: "alta_personas",
@@ -78,8 +72,6 @@ const MENU = {
             desc: "Acceso directo a documentos en Drive.",
             badge: "Ver",
             children: {
-              title: "",
-              subtitle: "",
               items: [
                 { id: "ct", title: "Contrato de Trabajo", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.trabajo },
                 { id: "nda", title: "NDA", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.nda },
@@ -104,8 +96,6 @@ const MENU = {
       badge: "Producción",
       badgeAlt: true,
       children: {
-        title: "",
-        subtitle: "",
         items: [
           { id: "rendicion", title: "Como Realizar Rendición", desc: "Checklist (placeholder).", badge: "Abrir", modal: { title: "Como Realizar Rendición", kicker: "Producción", body: placeholderText("Como Realizar Rendición") } },
           { id: "mail", title: "Armado Mail Rendición", desc: "Plantilla (placeholder).", badge: "Abrir", modal: { title: "Armado Mail Rendición", kicker: "Producción", body: placeholderText("Armado Mail Rendición") } },
@@ -128,8 +118,7 @@ const MENU = {
    DOM
 ========= */
 const menuGrid = document.getElementById("menuGrid");
-const backBtn = document.getElementById("backBtn");
-const homeBtn = document.getElementById("homeBtn");
+const breadcrumbBar = document.getElementById("breadcrumbBar");
 
 const overlay = document.getElementById("modalOverlay");
 const modalClose = document.getElementById("modalClose");
@@ -140,15 +129,19 @@ const modalPrimary = document.getElementById("modalPrimary");
 const modalSecondary = document.getElementById("modalSecondary");
 const toast = document.getElementById("toast");
 
-let stack = [MENU];
+/**
+ * stack items:
+ * { screen: <object>, label: <string> }
+ */
+let stack = [{ screen: MENU, label: "Inicio" }];
 
 /* =========
    Render
 ========= */
 function renderCurrent(){
-  const current = stack[stack.length - 1];
+  renderBreadcrumbs();
 
-  backBtn.classList.toggle("hidden", stack.length <= 1);
+  const current = stack[stack.length - 1].screen;
 
   menuGrid.innerHTML = "";
   (current.items || []).forEach(item => {
@@ -167,6 +160,38 @@ function renderCurrent(){
   });
 }
 
+function renderBreadcrumbs(){
+  breadcrumbBar.innerHTML = "";
+
+  stack.forEach((entry, idx) => {
+    if (idx > 0){
+      const sep = document.createElement("span");
+      sep.className = "sep";
+      sep.textContent = "›";
+      breadcrumbBar.appendChild(sep);
+    }
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "crumbBtn" + (idx === stack.length - 1 ? " current" : "");
+    btn.textContent = entry.label || (idx === 0 ? "Inicio" : "Sección");
+
+    btn.addEventListener("click", () => {
+      if (idx === stack.length - 1) return;
+      stack = stack.slice(0, idx + 1);
+      closeModal();
+      renderCurrent();
+    });
+
+    breadcrumbBar.appendChild(btn);
+  });
+}
+
+function pushScreen(screen, label){
+  stack.push({ screen, label });
+  renderCurrent();
+}
+
 function onItemClick(item){
   if (item.url){
     openExternal(item.url, "Google Drive");
@@ -174,8 +199,7 @@ function onItemClick(item){
   }
 
   if (item.children){
-    stack.push(item.children);
-    renderCurrent();
+    pushScreen(item.children, item.title);
     return;
   }
 
@@ -218,6 +242,7 @@ function openModal({ title, kicker, bodyHtml, primary, secondary }){
 }
 
 function closeModal(){
+  if (overlay.classList.contains("hidden")) return;
   overlay.classList.add("hidden");
   overlay.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
@@ -281,7 +306,8 @@ function openCompanyDataModal(){
         await copyText(all);
         showToast("Copiado: todos los datos");
       }
-    }
+    },
+    secondary: { label: "Cerrar", onClick: closeModal }
   });
 
   modalBody.querySelectorAll("[data-copy]").forEach(btn => {
@@ -364,20 +390,6 @@ function escapeHtml(str){
 }
 
 /* =========
-   Navegación
-========= */
-backBtn.addEventListener("click", () => {
-  if (stack.length > 1) stack.pop();
-  renderCurrent();
-});
-
-homeBtn.addEventListener("click", () => {
-  stack = [MENU];
-  renderCurrent();
-  closeModal();
-});
-
-/* =========
    Cerrar modal
 ========= */
 modalClose.addEventListener("click", closeModal);
@@ -385,7 +397,7 @@ overlay.addEventListener("click", (e) => {
   if (e.target === overlay) closeModal();
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !overlay.classList.contains("hidden")) closeModal();
+  if (e.key === "Escape") closeModal();
 });
 
 /* =========
