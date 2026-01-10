@@ -8,15 +8,22 @@ const LINKS = {
   trabajo: "https://docs.google.com/document/d/12RAj-Tu5ec1F90jeAtAFhM2T2sFh0Lln/edit?usp=sharing&ouid=101597232098541922085&rtpof=true&sd=true",
   ip: "https://docs.google.com/document/d/1EycBkBryI1VKB7CxSunkGGDcVeo9c6uN/edit?usp=sharing&ouid=101597232098541922085&rtpof=true&sd=true",
 
-  // Alta Proveedor (por ahora mismo link en ambos)
+  // Alta Proveedor
   alta_personas: "https://forms.clickup.com/31001374/f/xj2ry-9334/19VWKHJ9W4BQ4BDYG8",
-  alta_empresas: "https://forms.clickup.com/31001374/f/xj2ry-9334/19VWKHJ9W4BQ4BDYG8"
+  alta_empresas: "https://forms.clickup.com/31001374/f/xj2ry-14494/9ZJC7FHN71JZ5XKA0V"
 };
 
 function altaProveedorBody(){
   return `
     <p>Completar el alta proveedor. Presione el boton <strong>"Alta"</strong> para completar</p>
     <p>Si lo ha completado previamente no es necesario por segunda vez</p>
+  `;
+}
+
+function facturacionBody(){
+  return `
+    <p>La factura debe ser emitida a nombre de <strong>Gran Berta SRL</strong>. Se aceptan <strong>Facturas A o C</strong>.</p>
+    <p>En la descripción de la Factura agregar el nombre del proyecto para el que realizó el trabajo, y si no conoce el nombre se lo debe preguntar al jefe de producción que lo contactó.</p>
   `;
 }
 
@@ -47,7 +54,8 @@ const MENU = {
                     title: "Alta Personas",
                     kicker: "Proveedores",
                     body: altaProveedorBody(),
-                    primary: { label: "Alta", onClick: () => openExternal(LINKS.alta_personas, "Formulario de alta") }
+                    primary: { label: "Alta", onClick: () => openExternal(LINKS.alta_personas, "Formulario Alta Personas") },
+                    secondary: { label: "Cerrar", onClick: closeModal }
                   }
                 },
                 {
@@ -60,7 +68,8 @@ const MENU = {
                     title: "Alta Empresas",
                     kicker: "Proveedores",
                     body: altaProveedorBody(),
-                    primary: { label: "Alta", onClick: () => openExternal(LINKS.alta_empresas, "Formulario de alta") }
+                    primary: { label: "Alta", onClick: () => openExternal(LINKS.alta_empresas, "Formulario Alta Empresas") },
+                    secondary: { label: "Cerrar", onClick: closeModal }
                   }
                 }
               ]
@@ -82,9 +91,22 @@ const MENU = {
           {
             id: "facturacion",
             title: "Facturación",
-            desc: "Requisitos y envío (placeholder).",
+            desc: "Requisitos para emitir factura.",
             badge: "Abrir",
-            modal: { title: "Facturación", kicker: "Proveedores", body: placeholderText("Facturación") }
+            modal: {
+              title: "Facturación",
+              kicker: "Proveedores",
+              body: facturacionBody(),
+              primary: {
+                label: "Datos Empresa",
+                onClick: () => {
+                  // Reutiliza la misma ventana de Datos Empresa
+                  closeModal();
+                  openCompanyDataModal();
+                }
+              },
+              secondary: { label: "Cerrar", onClick: closeModal }
+            }
           },
         ]
       }
