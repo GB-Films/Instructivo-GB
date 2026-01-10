@@ -46,6 +46,8 @@ function rendicionBody(){
     <p>Se debera hacer la rendicion lo mas detallada posible utilizando este modelo de Rendición. Para el envio del mail con la rendición, revisar <button type="button" class="linkLike" data-action="open-armado-mail">Armado de Mail</button></p>
   `;
 
+}
+
 function garantiasBody(){
   return `
     <p>Las garantias que puedan solicitar los proveedores seran entregadas mediante <strong>cheque electronico</strong>.</p>
@@ -59,8 +61,6 @@ function efectivoBody(){
     <p>El efectivo debe ser solicitado previamente a <strong>amecible@gmail.com</strong> y es entregado en las oficinas, <strong>Mendoza 2364, Belgrano, CABA</strong>.</p>
     <p>La entrega es de <strong>Martes a Jueves</strong> de <strong>9 a 18</strong>.</p>
   `;
-}
-
 }
 
 function armadoMailBody(){
