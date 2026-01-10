@@ -3,14 +3,26 @@
 ========= */
 
 const LINKS = {
+  // Contratos
   nda: "https://docs.google.com/document/d/1xo2ibL-DJaxytpSM6mqWRFiP-nLEkYTV/edit?usp=drive_link&ouid=101597232098541922085&rtpof=true&sd=true",
   trabajo: "https://docs.google.com/document/d/12RAj-Tu5ec1F90jeAtAFhM2T2sFh0Lln/edit?usp=sharing&ouid=101597232098541922085&rtpof=true&sd=true",
-  ip: "https://docs.google.com/document/d/1EycBkBryI1VKB7CxSunkGGDcVeo9c6uN/edit?usp=sharing&ouid=101597232098541922085&rtpof=true&sd=true"
+  ip: "https://docs.google.com/document/d/1EycBkBryI1VKB7CxSunkGGDcVeo9c6uN/edit?usp=sharing&ouid=101597232098541922085&rtpof=true&sd=true",
+
+  // Alta Proveedor (por ahora mismo link en ambos)
+  alta_personas: "https://forms.clickup.com/31001374/f/xj2ry-9334/19VWKHJ9W4BQ4BDYG8",
+  alta_empresas: "https://forms.clickup.com/31001374/f/xj2ry-9334/19VWKHJ9W4BQ4BDYG8"
 };
 
+function altaProveedorBody(){
+  return `
+    <p>Completar el alta proveedor. Presione el boton <strong>"Alta"</strong> para completar</p>
+    <p>Si lo ha completado previamente no es necesario por segunda vez</p>
+  `;
+}
+
 const MENU = {
-  title: "Accesos rápidos",
-  subtitle: "Elegí una sección para ver opciones y abrir información.",
+  title: "",
+  subtitle: "",
   items: [
     {
       id: "proveedores",
@@ -19,15 +31,46 @@ const MENU = {
       badge: "Proveedores",
       badgeAlt: false,
       children: {
-        title: "Instructivo Proveedores",
-        subtitle: "Elegí una opción.",
+        title: "",
+        subtitle: "",
         items: [
           {
             id: "alta",
             title: "Alta como Proveedores",
-            desc: "Paso a paso (placeholder por ahora).",
-            badge: "Abrir",
-            modal: { title: "Alta como Proveedores", kicker: "Proveedores", body: placeholderText("Alta como Proveedores") }
+            desc: "Personas o Empresas.",
+            badge: "Ver",
+            children: {
+              title: "",
+              subtitle: "",
+              items: [
+                {
+                  id: "alta_personas",
+                  title: "Alta Personas",
+                  desc: "Formulario de alta",
+                  badge: "Alta",
+                  badgeAlt: true,
+                  modal: {
+                    title: "Alta Personas",
+                    kicker: "Proveedores",
+                    body: altaProveedorBody(),
+                    primary: { label: "Alta", onClick: () => openExternal(LINKS.alta_personas, "Formulario de alta") }
+                  }
+                },
+                {
+                  id: "alta_empresas",
+                  title: "Alta Empresas",
+                  desc: "Formulario de alta",
+                  badge: "Alta",
+                  badgeAlt: true,
+                  modal: {
+                    title: "Alta Empresas",
+                    kicker: "Proveedores",
+                    body: altaProveedorBody(),
+                    primary: { label: "Alta", onClick: () => openExternal(LINKS.alta_empresas, "Formulario de alta") }
+                  }
+                }
+              ]
+            }
           },
           {
             id: "contratos",
@@ -35,8 +78,8 @@ const MENU = {
             desc: "Acceso directo a documentos en Drive.",
             badge: "Ver",
             children: {
-              title: "Contratos",
-              subtitle: "Elegí un documento para abrir en Google Drive.",
+              title: "",
+              subtitle: "",
               items: [
                 { id: "ct", title: "Contrato de Trabajo", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.trabajo },
                 { id: "nda", title: "NDA", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.nda },
@@ -61,8 +104,8 @@ const MENU = {
       badge: "Producción",
       badgeAlt: true,
       children: {
-        title: "Instructivo Jefes/as de Producción",
-        subtitle: "Elegí una opción.",
+        title: "",
+        subtitle: "",
         items: [
           { id: "rendicion", title: "Como Realizar Rendición", desc: "Checklist (placeholder).", badge: "Abrir", modal: { title: "Como Realizar Rendición", kicker: "Producción", body: placeholderText("Como Realizar Rendición") } },
           { id: "mail", title: "Armado Mail Rendición", desc: "Plantilla (placeholder).", badge: "Abrir", modal: { title: "Armado Mail Rendición", kicker: "Producción", body: placeholderText("Armado Mail Rendición") } },
@@ -82,11 +125,9 @@ const MENU = {
 };
 
 /* =========
-   Estado + DOM
+   DOM
 ========= */
 const menuGrid = document.getElementById("menuGrid");
-const screenTitle = document.getElementById("screenTitle");
-const screenSubtitle = document.getElementById("screenSubtitle");
 const backBtn = document.getElementById("backBtn");
 const homeBtn = document.getElementById("homeBtn");
 
@@ -99,15 +140,13 @@ const modalPrimary = document.getElementById("modalPrimary");
 const modalSecondary = document.getElementById("modalSecondary");
 const toast = document.getElementById("toast");
 
-let stack = [MENU]; // stack de pantallas
+let stack = [MENU];
 
 /* =========
    Render
 ========= */
 function renderCurrent(){
   const current = stack[stack.length - 1];
-  screenTitle.textContent = current.title || "Menú";
-  screenSubtitle.textContent = current.subtitle || "";
 
   backBtn.classList.toggle("hidden", stack.length <= 1);
 
@@ -123,7 +162,6 @@ function renderCurrent(){
       </div>
       <div class="tileDesc">${escapeHtml(item.desc || "")}</div>
     `;
-
     tile.addEventListener("click", () => onItemClick(item));
     menuGrid.appendChild(tile);
   });
@@ -131,8 +169,7 @@ function renderCurrent(){
 
 function onItemClick(item){
   if (item.url){
-    window.open(item.url, "_blank", "noopener,noreferrer");
-    showToast("Abierto en Google Drive");
+    openExternal(item.url, "Google Drive");
     return;
   }
 
@@ -151,7 +188,9 @@ function onItemClick(item){
     openModal({
       title: item.modal.title,
       kicker: item.modal.kicker,
-      bodyHtml: item.modal.body
+      bodyHtml: item.modal.body,
+      primary: item.modal.primary,
+      secondary: item.modal.secondary
     });
     return;
   }
@@ -207,7 +246,7 @@ function setupModalButtons(primary, secondary){
 }
 
 /* =========
-   Datos empresa (copiar uno o todos)
+   Datos empresa
 ========= */
 const COMPANY = [
   { key: "Razón Social", value: "Gran Berta SRL" },
@@ -220,7 +259,7 @@ function openCompanyDataModal(){
     <div class="dataRow">
       <div class="dataLeft">
         <div class="dataKey">${escapeHtml(row.key)}</div>
-        <div class="dataVal" id="val-${idx}">${escapeHtml(row.value)}</div>
+        <div class="dataVal">${escapeHtml(row.value)}</div>
       </div>
       <button class="copyBtn" type="button" data-copy="${idx}">Copiar</button>
     </div>
@@ -242,16 +281,14 @@ function openCompanyDataModal(){
         await copyText(all);
         showToast("Copiado: todos los datos");
       }
-    },
-    secondary: { label: "Cerrar", onClick: closeModal }
+    }
   });
 
   modalBody.querySelectorAll("[data-copy]").forEach(btn => {
     btn.addEventListener("click", async (e) => {
       const i = Number(e.currentTarget.getAttribute("data-copy"));
-      const row = COMPANY[i];
-      await copyText(row.value);
-      showToast(`Copiado: ${row.key}`);
+      await copyText(COMPANY[i].value);
+      showToast(`Copiado: ${COMPANY[i].key}`);
     });
   });
 }
@@ -259,11 +296,15 @@ function openCompanyDataModal(){
 /* =========
    Helpers
 ========= */
+function openExternal(url, label){
+  window.open(url, "_blank", "noopener,noreferrer");
+  showToast(`Abierto: ${label}`);
+}
+
 function placeholderText(sectionTitle){
   return `
     <p><strong>${escapeHtml(sectionTitle)}</strong></p>
     <p>Este contenido es de prueba por ahora. Acá después pegamos el instructivo real, links, PDFs o lo que necesites.</p>
-    <p style="color: #9aa7c3; margin-top: 10px;">(Sí, es placeholder. Mejor esto que inventar y después llorar.)</p>
   `;
 }
 
