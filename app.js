@@ -45,6 +45,22 @@ function rendicionBody(){
   return `
     <p>Se debera hacer la rendicion lo mas detallada posible utilizando este modelo de Rendición. Para el envio del mail con la rendición, revisar <button type="button" class="linkLike" data-action="open-armado-mail">Armado de Mail</button></p>
   `;
+
+function garantiasBody(){
+  return `
+    <p>Las garantias que puedan solicitar los proveedores seran entregadas mediante <strong>cheque electronico</strong>.</p>
+    <p>Enviar mail mediante <button type="button" class="linkLike" data-action="open-armado-mail">Armado Mail Rendicion</button> y colocar en el cuerpo del mail el pedido lo mas detallado posible, sobretodo el monto, Razon social y CUIT de la empresa o persona.</p>
+  `;
+}
+
+function efectivoBody(){
+  return `
+    <p>Los gastos que superen los <strong>$50mil</strong> pesos, deberan ser abonados por medio de factura a nombre de la empresa.</p>
+    <p>El efectivo debe ser solicitado previamente a <strong>amecible@gmail.com</strong> y es entregado en las oficinas, <strong>Mendoza 2364, Belgrano, CABA</strong>.</p>
+    <p>La entrega es de <strong>Martes a Jueves</strong> de <strong>9 a 18</strong>.</p>
+  `;
+}
+
 }
 
 function armadoMailBody(){
@@ -243,6 +259,30 @@ const MENU = {
             desc: "Generador de asunto + cuerpo.",
             badge: "Abrir",
             action: "armadoMail"
+          },
+          {
+            id: "garantias",
+            title: "Garantias",
+            desc: "Cheques electrónicos + mail de pedido.",
+            badge: "Abrir",
+            modal: {
+              title: "Garantias",
+              kicker: "Producción",
+              body: garantiasBody(),
+              secondary: { label: "Cerrar", onClick: closeModal }
+            }
+          },
+          {
+            id: "efectivo",
+            title: "Efectivo",
+            desc: "Reglas y horarios de entrega.",
+            badge: "Abrir",
+            modal: {
+              title: "Efectivo",
+              kicker: "Producción",
+              body: efectivoBody(),
+              secondary: { label: "Cerrar", onClick: closeModal }
+            }
           },
           {
             id: "nubes",
