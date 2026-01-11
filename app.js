@@ -80,10 +80,10 @@ function armadoMailBody(){
       <div class="field" id="amFieldArea">
         <div class="fieldLabel">Área</div>
         <select class="control" id="amArea">
-          <option value="Producción">Producción</option>
-          <option value="Arte">Arte</option>
-          <option value="Vestuario">Vestuario</option>
-          <option value="Legales">Legales</option>
+          <option value="PRODUCCIÓN">PRODUCCIÓN</option>
+          <option value="ARTE">ARTE</option>
+          <option value="VESTUARIO">VESTUARIO</option>
+          <option value="LEGALES">LEGALES</option>
         </select>
       </div>
 
