@@ -87,6 +87,17 @@ function armadoMailBody(){
         </select>
       </div>
 
+
+      <div class="field" id="amFieldCategory">
+        <div class="fieldLabel">Categoría</div>
+        <select class="control" id="amCategory">
+          <option value="RENDICIÓN">RENDICIÓN</option>
+          <option value="PAGOS Y CONTRATOS">PAGOS Y CONTRATOS</option>
+          <option value="GARANTÍAS">GARANTÍAS</option>
+          <option value="EFECTIVO">EFECTIVO</option>
+        </select>
+      </div>
+
       <div class="field" id="amFieldName">
         <div class="fieldLabel">Nombre (quien rinde)</div>
         <input class="control" id="amName" type="text" placeholder="Nombre y Apellido" autocomplete="name" />
@@ -227,7 +238,7 @@ const MENU = {
     },
     {
       id: "produccion",
-      title: "Instructivo Jefes/as de Producción",
+      title: "Instructivo Areas de Produccion",
       desc: "Rendición, mail y accesos a nubes.",
       badge: "Producción",
       badgeAlt: true,
@@ -275,6 +286,13 @@ const MENU = {
               title: "Efectivo",
               kicker: "Producción",
               body: efectivoBody(),
+              primary: {
+                label: "COMUNICACIÓN POR MAIL",
+                onClick: () => {
+                  closeModal();
+                  openArmadoMailModal({ category: "EFECTIVO" });
+                }
+              },
               secondary: { label: "Cerrar", onClick: closeModal }
             }
           },
@@ -494,7 +512,7 @@ function setupModalButtons(primary, secondary){
 /* =========
    Armado Mail (UX)
 ========= */
-function openArmadoMailModal(){
+function openArmadoMailModal(preset = {}){
   openModal({
     title: "Comunicacion por Mail",
     kicker: "Producción",
@@ -502,12 +520,13 @@ function openArmadoMailModal(){
     actionsAlign: "left",
     secondary: { label: "Cerrar", onClick: closeModal }
   });
-  initArmadoMailUI();
+  initArmadoMailUI(preset);
 }
 
-function initArmadoMailUI(){
+function initArmadoMailUI(preset = {}){
   const elProject = modalBody.querySelector("#amProject");
   const elArea = modalBody.querySelector("#amArea");
+  const elCategory = modalBody.querySelector("#amCategory");
   const elName = modalBody.querySelector("#amName");
 
   const fieldName = modalBody.querySelector("#amFieldName");
@@ -518,14 +537,16 @@ function initArmadoMailUI(){
   const btnCopySubject = modalBody.querySelector("#amCopySubject");
   const btnCopyTo = modalBody.querySelector("#amCopyTo");
 
-  if (!elProject || !elArea || !elName || !outSubject || !btnCopySubject || !btnCopyTo) return;
+  if (!elProject || !elArea || !elCategory || !elName || !outSubject || !btnCopySubject || !btnCopyTo) return;
 
   const compute = () => {
     const project = elProject.value;
     const area = elArea.value;
     const name = (elName.value || "").trim();
 
-    const subject = `${area} - ${project} - ${name || "[Nombre]"}`;
+    const category = elCategory.value;
+
+    const subject = `${project} - ${area} - ${category} - ${name || "[Nombre]"}`;
 
     outSubject.textContent = subject;
 
@@ -535,11 +556,18 @@ function initArmadoMailUI(){
     btnCopySubject.disabled = !ok;
   };
 
+  // Presets (por ejemplo, categoría por defecto)
+  if (preset.project) elProject.value = preset.project;
+  if (preset.area) elArea.value = preset.area;
+  if (preset.category) elCategory.value = preset.category;
+  if (preset.name) elName.value = preset.name;
+
   compute();
 
   const listen = () => compute();
   elProject.addEventListener("change", listen);
   elArea.addEventListener("change", listen);
+  elCategory.addEventListener("change", listen);
   elName.addEventListener("input", listen);
 
   btnCopySubject.addEventListener("click", async () => {
@@ -616,7 +644,7 @@ function initNubesUI(){
 ========= */
 const COMPANY = [
   { key: "Razón Social", value: "Gran Berta SRL" },
-  { key: "CUIT", value: "33715736549" },
+  { key: "CUIT e IIBB", value: "33715736549" },
   { key: "IVA", value: "Responsable Inscripto" }
 ];
 
@@ -750,8 +778,9 @@ document.addEventListener("click", (e) => {
 
   const action = btn.getAttribute("data-action");
   if (action === "open-armado-mail"){
+    const category = btn.getAttribute("data-category");
     closeModal();
-    openArmadoMailModal();
+    openArmadoMailModal({ category: category || undefined });
   }
 });
 
