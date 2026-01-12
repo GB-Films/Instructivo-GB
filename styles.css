@@ -555,3 +555,8 @@ select.control option{
   background-color: var(--bg1);
   color: var(--text);
 }
+
+/* Modal footer: acciones a la izquierda, Cerrar a la derecha */
+#modalSecondary{ margin-left: auto; }
+
+.modalFooter{ justify-content: flex-start; }

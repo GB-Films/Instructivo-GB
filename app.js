@@ -57,9 +57,9 @@ function garantiasBody(){
 
 function efectivoBody(){
   return `
-    <p>Los gastos que superen los <strong>$50mil</strong> pesos, deberan ser abonados por medio de factura a nombre de la empresa.</p>
-    <p>El efectivo debe ser solicitado previamente a <strong>amecible@gmail.com</strong> y es entregado en las oficinas, <strong>Mendoza 2364, Belgrano, CABA</strong>.</p>
-    <p>La entrega es de <strong>Martes a Jueves</strong> de <strong>9 a 18</strong>.</p>
+    <p>Los gastos que superen los $50mil pesos, deberan ser abonados por medio de factura a nombre de la empresa.</p>
+    <p>El efectivo debe ser solicitado con 48 horas de anticipación a amecible@gmail.com y tomas@granberta.com, y es entregado en las oficinas en Mendoza 2364, Belgrano, CABA. Utilizar <button type="button" class="linkLike" data-action="open-armado-mail" data-category="EFECTIVO">Comunicación por Mail</button></p>
+    <p>La entrega es de Martes a Jueves de 9 a 18.</p>
   `;
 }
 
@@ -255,6 +255,13 @@ const MENU = {
               kicker: "Producción",
               body: rendicionBody(),
               primary: { label: "MODELO", onClick: () => openExternal(LINKS.modelo_rendicion, "Modelo de Rendición") },
+              extra: {
+                label: "COMUNICACIÓN POR MAIL",
+                onClick: () => {
+                  closeModal();
+                  openArmadoMailModal({ category: "RENDICIÓN" });
+                }
+              },
               secondary: { label: "Cerrar", onClick: closeModal }
             }
           },
@@ -274,6 +281,13 @@ const MENU = {
               title: "Garantias",
               kicker: "Producción",
               body: garantiasBody(),
+              extra: {
+                label: "COMUNICACIÓN POR MAIL",
+                onClick: () => {
+                  closeModal();
+                  openArmadoMailModal({ category: "GARANTÍAS" });
+                }
+              },
               secondary: { label: "Cerrar", onClick: closeModal }
             }
           },
@@ -330,6 +344,7 @@ const modalKicker = document.getElementById("modalKicker");
 const modalBody = document.getElementById("modalBody");
 const modalPrimary = document.getElementById("modalPrimary");
 const modalSecondary = document.getElementById("modalSecondary");
+const modalExtra = document.getElementById("modalExtra");
 const modalFooter = document.querySelector(".modalFooter");
 const toast = document.getElementById("toast");
 
@@ -429,7 +444,8 @@ function onItemClick(item){
       bodyHtml: item.modal.body,
       primary: item.modal.primary,
       secondary: item.modal.secondary,
-      actionsAlign: item.modal.actionsAlign
+      actionsAlign: item.modal.actionsAlign,
+      extra: item.modal.extra
     });
     return;
   }
@@ -445,12 +461,12 @@ function onItemClick(item){
 /* =========
    Modal
 ========= */
-function openModal({ title, kicker, bodyHtml, primary, secondary, actionsAlign }){
+function openModal({ title, kicker, bodyHtml, primary, secondary, extra, actionsAlign }){
   modalTitle.textContent = title || "Detalle";
   modalKicker.textContent = kicker || "Detalle";
   modalBody.innerHTML = bodyHtml || "<p>Sin contenido.</p>";
 
-  setupModalButtons(primary, secondary);
+  setupModalButtons(primary, secondary, extra);
   applyFooterLayout();
 
   overlay.classList.remove("hidden");
@@ -464,30 +480,19 @@ function closeModal(){
   overlay.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
   modalBody.innerHTML = "";
-  setupModalButtons(null, null);
+  setupModalButtons(null, null, null);
   if (modalFooter) modalFooter.classList.remove("left", "split");
   if (modalFooter) modalFooter.classList.remove("left");
 }
 
 function applyFooterLayout(){
   if (!modalFooter) return;
-
-  const primaryVisible = !modalPrimary.classList.contains("hidden");
-  const secondaryVisible = !modalSecondary.classList.contains("hidden");
-
-  modalFooter.classList.remove("left", "split");
-
-  if (primaryVisible && secondaryVisible){
-    // Primary a la izquierda, Cerrar a la derecha
-    modalFooter.classList.add("split");
-  } else if (primaryVisible && !secondaryVisible){
-    modalFooter.classList.add("left");
-  } else {
-    // Solo cerrar / secundario: a la derecha (default)
-  }
+  // Layout se resuelve por CSS (Cerrar a la derecha con margin-left:auto)
+  modalFooter.classList.remove("left","split");
 }
 
-function setupModalButtons(primary, secondary){
+
+function setupModalButtons(primary, secondary, extra){
   if (primary && typeof primary.onClick === "function"){
     modalPrimary.classList.remove("hidden");
     modalPrimary.textContent = primary.label || "Acción";
@@ -495,6 +500,15 @@ function setupModalButtons(primary, secondary){
   } else {
     modalPrimary.classList.add("hidden");
     modalPrimary.onclick = null;
+  }
+
+  if (extra && typeof extra.onClick === "function"){
+    modalExtra.classList.remove("hidden");
+    modalExtra.textContent = extra.label || "Acción";
+    modalExtra.onclick = extra.onClick;
+  } else {
+    modalExtra.classList.add("hidden");
+    modalExtra.onclick = null;
   }
 
   if (secondary && typeof secondary.onClick === "function"){
