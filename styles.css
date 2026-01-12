@@ -619,3 +619,29 @@ body[data-section="produccion"]{
   width: 18px;
   height: 18px;
 }
+
+/* Tema por botón (menú principal) */
+.tile[data-theme="proveedores"]{
+  --accent:#3b82f6;
+  --accentGrad1:#2563eb;
+  --accentGrad2:#38bdf8;
+  --accentSoft: rgba(59,130,246,.18);
+  --accentStroke: rgba(59,130,246,.30);
+  --accentHoverStroke: rgba(59,130,246,.45);
+  --accentBg: rgba(59,130,246,.14);
+  --accentBorder: rgba(59,130,246,.28);
+  --accentFocus: rgba(59,130,246,.35);
+  --accentText: #eaf2ff;
+}
+.tile[data-theme="produccion"]{
+  --accent:#22c55e;
+  --accentGrad1:#16a34a;
+  --accentGrad2:#34d399;
+  --accentSoft: rgba(34,197,94,.18);
+  --accentStroke: rgba(34,197,94,.30);
+  --accentHoverStroke: rgba(34,197,94,.45);
+  --accentBg: rgba(34,197,94,.14);
+  --accentBorder: rgba(34,197,94,.28);
+  --accentFocus: rgba(34,197,94,.35);
+  --accentText: #eafff3;
+}

@@ -417,6 +417,10 @@ function renderCurrent(){
     const tile = document.createElement("button");
     tile.type = "button";
     tile.className = "tile";
+    // Tema por botón (para el menú principal)
+    const itemTheme = (item.children && item.children.theme) || item.theme || "";
+    if (itemTheme) tile.dataset.theme = itemTheme;
+
     tile.innerHTML = `
       <div class="tileTop">
         <div class="tileTitle">${escapeHtml(item.title)}</div>
