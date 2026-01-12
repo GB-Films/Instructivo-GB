@@ -8,6 +8,15 @@
   --muted2:#9aa7c3;
   --accent:#7c5cff;
   --accent2:#2dd4bf;
+  --accentGrad1:#7c5cff;
+  --accentGrad2:#2dd4bf;
+  --accentSoft: rgba(124,92,255,.18);
+  --accentStroke: rgba(124,92,255,.30);
+  --accentHoverStroke: rgba(124,92,255,.45);
+  --accentBg: rgba(124,92,255,.14);
+  --accentBorder: rgba(124,92,255,.28);
+  --accentFocus: rgba(124,92,255,.35);
+  --accentText: #efeaff;
   --shadow: 0 18px 60px rgba(0,0,0,.45);
   --radius: 18px;
 }
@@ -98,8 +107,8 @@ body{
 }
 .crumbBtn:hover{ background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.18); transform: translateY(-1px); }
 .crumbBtn.current{
-  background: rgba(124,92,255,.14);
-  border-color: rgba(124,92,255,.28);
+  background: var(--accentBg);
+  border-color: var(--accentBorder);
 }
 
 .sep{
@@ -143,11 +152,11 @@ body{
 
 .tile:hover{
   transform: translateY(-2px);
-  border-color: rgba(124,92,255,.45);
+  border-color: var(--accentHoverStroke);
   background: rgba(255,255,255,.09);
   box-shadow: 0 10px 26px rgba(0,0,0,.25);
 }
-.tile:focus-visible{ box-shadow: 0 0 0 3px rgba(124,92,255,.35); }
+.tile:focus-visible{ box-shadow: 0 0 0 3px var(--accentFocus); }
 
 .tileTop{
   display:flex;
@@ -169,9 +178,13 @@ body{
   font-size:12px;
   padding:6px 10px;
   border-radius: 999px;
-  background: rgba(124,92,255,.18);
-  border:1px solid rgba(124,92,255,.30);
-  color: #efeaff;
+  background: var(--accentSoft);
+  border:1px solid var(--accentStroke);
+  color: var(--accentText);
+  white-space:nowrap;
+  font-weight: 900;
+  flex: 0 0 auto;
+}
   white-space:nowrap;
   font-weight: 900;
   flex: 0 0 auto;
@@ -279,7 +292,7 @@ body{
 }
 .btn:hover{ background: rgba(255,255,255,.07); }
 .btn.primary{
-  background: linear-gradient(135deg, rgba(124,92,255,.92), rgba(45,212,191,.55));
+  background: linear-gradient(135deg, var(--accentGrad1), var(--accentGrad2));
   border-color: rgba(255,255,255,.16);
   font-weight: 950;
 }
@@ -496,8 +509,8 @@ pre.outVal{
 }
 .chip:hover{ background: rgba(255,255,255,.06); transform: translateY(-1px); }
 .chip.active{
-  background: rgba(124,92,255,.16);
-  border-color: rgba(124,92,255,.32);
+  background: var(--accentBg);
+  border-color: var(--accentStroke);
 }
 .nubeRow{
   cursor:pointer;
@@ -559,3 +572,50 @@ select.control option{
 /* Modal footer: acciones a la izquierda, Cerrar a la derecha */
 #modalSecondary{ margin-left: auto; }
 .modalFooter{ justify-content: flex-start; }
+
+/* =========
+   Section Themes
+========= */
+body[data-section="proveedores"]{
+  --accent:#3b82f6;
+  --accentGrad1:#2563eb;
+  --accentGrad2:#38bdf8;
+  --accentSoft: rgba(59,130,246,.18);
+  --accentStroke: rgba(59,130,246,.30);
+  --accentHoverStroke: rgba(59,130,246,.45);
+  --accentBg: rgba(59,130,246,.14);
+  --accentBorder: rgba(59,130,246,.28);
+  --accentFocus: rgba(59,130,246,.35);
+  --accentText: #eaf2ff;
+}
+
+body[data-section="produccion"]{
+  --accent:#22c55e;
+  --accentGrad1:#16a34a;
+  --accentGrad2:#34d399;
+  --accentSoft: rgba(34,197,94,.18);
+  --accentStroke: rgba(34,197,94,.30);
+  --accentHoverStroke: rgba(34,197,94,.45);
+  --accentBg: rgba(34,197,94,.14);
+  --accentBorder: rgba(34,197,94,.28);
+  --accentFocus: rgba(34,197,94,.35);
+  --accentText: #eafff3;
+}
+
+/* Tiles: icon (reemplaza pills Abrir/Ver) */
+.tileIcon{
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--accentSoft);
+  border: 1px solid var(--accentStroke);
+  color: var(--accentText);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex: 0 0 auto;
+}
+.tileIcon svg{
+  width: 18px;
+  height: 18px;
+}

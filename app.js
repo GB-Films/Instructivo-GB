@@ -159,6 +159,7 @@ const MENU = {
       badge: "Proveedores",
       badgeAlt: false,
       children: {
+          theme: "proveedores",
         items: [
           {
             id: "alta",
@@ -243,6 +244,7 @@ const MENU = {
       badge: "Producción",
       badgeAlt: true,
       children: {
+          theme: "produccion",
         items: [
           {
             id: "rendicion",
@@ -350,7 +352,62 @@ let stack = [{ screen: MENU, label: "Inicio" }];
 /* =========
    Render
 ========= */
+
+const ICONS = {
+  chevronRight: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>`,
+  externalLink: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7"/><path d="M10 14L21 3"/><path d="M21 14v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"/></svg>`,
+  users: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>`,
+  building: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M6 21V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14"/><path d="M9 9h.01"/><path d="M15 9h.01"/><path d="M9 13h.01"/><path d="M15 13h.01"/><path d="M9 17h.01"/><path d="M15 17h.01"/></svg>`,
+  fileText: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>`,
+  receipt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="M9 6h6"/><path d="M9 10h6"/><path d="M9 14h6"/></svg>`,
+  mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>`,
+  cloud: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.5A4.5 4.5 0 0 0 18 9h-1.2A7 7 0 1 0 4 15.7"/><path d="M7 17h10"/><path d="M9 21h6"/></svg>`,
+  shieldCheck: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3 9-7 10-4-1-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg>`,
+  banknote: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 10h.01"/><path d="M18 14h.01"/></svg>`,
+  idCard: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10"/><path d="M7 12h6"/><path d="M8 17c1.2-2 4.8-2 6 0"/></svg>`,
+  clapper: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M3 7l4-5h5l-4 5"/><path d="M12 7l4-5h5l-4 5"/></svg>`,
+  info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`,
+  lock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`,
+  copyright: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9a4 4 0 1 0 0 6"/></svg>`
+};
+
+const ICON_BY_ID = {
+  proveedores: "fileText",
+  alta: "users",
+  alta_personas: "users",
+  alta_empresas: "building",
+  contratos: "fileText",
+  ct: "fileText",
+  nda: "lock",
+  cip: "copyright",
+  facturacion: "receipt",
+
+  produccion: "clapper",
+  rendicion: "receipt",
+  mail: "mail",
+  nubes: "cloud",
+  garantias: "shieldCheck",
+  efectivo: "banknote",
+
+  empresa: "idCard"
+};
+
+function getTileIcon(item){
+  const key =
+    ICON_BY_ID[item.id] ||
+    (item.url ? "externalLink" : (item.children ? "chevronRight" : "info"));
+  return ICONS[key] || ICONS.info;
+}
+
+function applyTheme(){
+  const theme =
+    [...stack].reverse().map(e => e.screen && e.screen.theme).find(Boolean) || "";
+  if (theme) document.body.dataset.section = theme;
+  else document.body.removeAttribute("data-section");
+}
+
 function renderCurrent(){
+  applyTheme();
   renderBreadcrumbs();
 
   const current = stack[stack.length - 1].screen;
@@ -363,7 +420,7 @@ function renderCurrent(){
     tile.innerHTML = `
       <div class="tileTop">
         <div class="tileTitle">${escapeHtml(item.title)}</div>
-        <div class="badge ${item.badgeAlt ? "alt" : ""}">${escapeHtml(item.badge || "Abrir")}</div>
+        <div class="tileIcon" aria-hidden="true">${getTileIcon(item)}</div>
       </div>
       <div class="tileDesc">${escapeHtml(item.desc || "")}</div>
     `;
