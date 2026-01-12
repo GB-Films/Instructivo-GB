@@ -43,7 +43,7 @@ function facturacionBody(){
 
 function rendicionBody(){
   return `
-    <p>Se debera hacer la rendicion lo mas detallada posible utilizando este modelo de Rendición. Para el envio del mail con la rendición, revisar <button type="button" class="linkLike" data-action="open-armado-mail">Comunicacion por Mail</button></p>
+    <p>Se debera hacer la rendicion lo mas detallada posible utilizando este modelo de Rendición. Para el envio del mail con la rendición, revisar <button type="button" class="linkLike" data-action="open-armado-mail" data-category="RENDICIÓN">Comunicación por Mail</button></p>
   `;
 
 }
@@ -51,7 +51,7 @@ function rendicionBody(){
 function garantiasBody(){
   return `
     <p>Las garantias que puedan solicitar los proveedores seran entregadas mediante <strong>cheque electronico</strong>.</p>
-    <p>Enviar mail mediante <button type="button" class="linkLike" data-action="open-armado-mail">Comunicacion por Mail</button> y colocar en el cuerpo del mail el pedido lo mas detallado posible, sobretodo el monto, Razon social y CUIT de la empresa o persona.</p>
+    <p>Enviar mail mediante <button type="button" class="linkLike" data-action="open-armado-mail" data-category="RENDICIÓN">Comunicación por Mail</button> y colocar en el cuerpo del mail el pedido lo mas detallado posible, sobretodo el monto, Razon social y CUIT de la empresa o persona.</p>
   `;
 }
 
@@ -255,19 +255,12 @@ const MENU = {
               kicker: "Producción",
               body: rendicionBody(),
               primary: { label: "MODELO", onClick: () => openExternal(LINKS.modelo_rendicion, "Modelo de Rendición") },
-              extra: {
-                label: "COMUNICACIÓN POR MAIL",
-                onClick: () => {
-                  closeModal();
-                  openArmadoMailModal({ category: "RENDICIÓN" });
-                }
-              },
               secondary: { label: "Cerrar", onClick: closeModal }
             }
           },
           {
             id: "mail",
-            title: "Comunicacion por Mail",
+            title: "Comunicación por Mail",
             desc: "Generador de asunto.",
             badge: "Abrir",
             action: "armadoMail"
@@ -281,7 +274,7 @@ const MENU = {
               title: "Garantias",
               kicker: "Producción",
               body: garantiasBody(),
-              extra: {
+              primary: {
                 label: "COMUNICACIÓN POR MAIL",
                 onClick: () => {
                   closeModal();
@@ -444,8 +437,8 @@ function onItemClick(item){
       bodyHtml: item.modal.body,
       primary: item.modal.primary,
       secondary: item.modal.secondary,
-      actionsAlign: item.modal.actionsAlign,
-      extra: item.modal.extra
+      extra: item.modal.extra,
+      actionsAlign: item.modal.actionsAlign
     });
     return;
   }
@@ -486,39 +479,27 @@ function closeModal(){
 }
 
 function applyFooterLayout(){
+  // Layout se resuelve por CSS (#modalSecondary margin-left:auto)
   if (!modalFooter) return;
-  // Layout se resuelve por CSS (Cerrar a la derecha con margin-left:auto)
-  modalFooter.classList.remove("left","split");
+  modalFooter.classList.remove("left", "split");
 }
 
-
 function setupModalButtons(primary, secondary, extra){
-  if (primary && typeof primary.onClick === "function"){
-    modalPrimary.classList.remove("hidden");
-    modalPrimary.textContent = primary.label || "Acción";
-    modalPrimary.onclick = primary.onClick;
-  } else {
-    modalPrimary.classList.add("hidden");
-    modalPrimary.onclick = null;
-  }
+  const setBtn = (btn, spec, fallbackLabel) => {
+    if (!btn) return;
+    if (spec && typeof spec.onClick === "function"){
+      btn.classList.remove("hidden");
+      btn.textContent = spec.label || fallbackLabel;
+      btn.onclick = spec.onClick;
+    } else {
+      btn.classList.add("hidden");
+      btn.onclick = null;
+    }
+  };
 
-  if (extra && typeof extra.onClick === "function"){
-    modalExtra.classList.remove("hidden");
-    modalExtra.textContent = extra.label || "Acción";
-    modalExtra.onclick = extra.onClick;
-  } else {
-    modalExtra.classList.add("hidden");
-    modalExtra.onclick = null;
-  }
-
-  if (secondary && typeof secondary.onClick === "function"){
-    modalSecondary.classList.remove("hidden");
-    modalSecondary.textContent = secondary.label || "Cerrar";
-    modalSecondary.onclick = secondary.onClick;
-  } else {
-    modalSecondary.classList.add("hidden");
-    modalSecondary.onclick = null;
-  }
+  setBtn(modalPrimary, primary, "Acción");
+  setBtn(modalExtra, extra, "Acción");
+  setBtn(modalSecondary, secondary, "Cerrar");
 
   applyFooterLayout();
 }
@@ -528,7 +509,7 @@ function setupModalButtons(primary, secondary, extra){
 ========= */
 function openArmadoMailModal(preset = {}){
   openModal({
-    title: "Comunicacion por Mail",
+    title: "Comunicación por Mail",
     kicker: "Producción",
     bodyHtml: armadoMailBody(),
     actionsAlign: "left",

@@ -558,5 +558,4 @@ select.control option{
 
 /* Modal footer: acciones a la izquierda, Cerrar a la derecha */
 #modalSecondary{ margin-left: auto; }
-
 .modalFooter{ justify-content: flex-start; }
