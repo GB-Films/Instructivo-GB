@@ -21,10 +21,31 @@ const EMAILS = {
   to2: "amecible@gmail.com"
 };
 
+const PROJECTS = [
+  "LA CASONA",
+  "JUBILADA Y PELIGROSA",
+];
+
+const AREAS = [
+  "PRODUCCIÓN",
+  "ARTE",
+  "VESTUARIO",
+  "LEGALES",
+];
+
+const AREAS_NUBES = [
+  "PRODUCCIÓN",
+  "ARTE",
+  "VESTUARIO",
+];
+
 const NUBES = [
-  { area: "Produccion", title: "Producción", url: "https://drive.google.com/drive/folders/1aAWTCSMtZy5eHfsagGcj3_WlOHFKofu8?usp=sharing" },
-  { area: "Arte", title: "Arte", url: "https://drive.google.com/drive/folders/1ualxM8uxkmJOGUjA9hT44uN6mlach3dO?usp=sharing" },
-  { area: "Vestuario", title: "Vestuario", url: "https://drive.google.com/drive/folders/1Wdu8oUGQtzLgqyoNtH_Xczo0vwz92RZs?usp=sharing" },
+  { project: "LA CASONA", area: "PRODUCCIÓN", url: "https://drive.google.com/drive/folders/1aAWTCSMtZy5eHfsagGcj3_WlOHFKofu8?usp=sharing" },
+  { project: "LA CASONA", area: "ARTE", url: "https://drive.google.com/drive/folders/1ualxM8uxkmJOGUjA9hT44uN6mlach3dO?usp=sharing" },
+  { project: "LA CASONA", area: "VESTUARIO", url: "https://drive.google.com/drive/folders/1Wdu8oUGQtzLgqyoNtH_Xczo0vwz92RZs?usp=sharing" },
+  { project: "JUBILADA Y PELIGROSA", area: "PRODUCCIÓN", url: "https://drive.google.com/drive/folders/1aAWTCSMtZy5eHfsagGcj3_WlOHFKofu8?usp=sharing" },
+  { project: "JUBILADA Y PELIGROSA", area: "ARTE", url: "https://drive.google.com/drive/folders/1ualxM8uxkmJOGUjA9hT44uN6mlach3dO?usp=sharing" },
+  { project: "JUBILADA Y PELIGROSA", area: "VESTUARIO", url: "https://drive.google.com/drive/folders/1Wdu8oUGQtzLgqyoNtH_Xczo0vwz92RZs?usp=sharing" },
 ];
 
 function altaProveedorBody(){
@@ -126,26 +147,38 @@ function armadoMailBody(){
 }
 
 function nubesBody(){
-  const chips = ["Todos", "Produccion", "Arte", "Vestuario"].map((c, i) => `
+  const chips = ["TODOS", ...AREAS_NUBES].map((c, i) => `
     <button type="button" class="chip ${i === 0 ? "active" : ""}" data-nube-filter="${c}">${c}</button>
   `).join("");
 
+  const projectOpts = [`<option value="TODOS">TODOS LOS PROYECTOS</option>`]
+    .concat(PROJECTS.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`))
+    .join("");
+
   const rows = NUBES.map((n, i) => `
-    <div class="dataRow nubeRow" data-nube-area="${n.area}" data-nube-url="${escapeHtml(n.url)}">
+    <div class="dataRow nubeRow" data-nube-area="${escapeHtml(n.area)}" data-nube-project="${escapeHtml(n.project)}" data-nube-url="${escapeHtml(n.url)}">
       <div class="dataLeft">
-        <div class="dataKey nubeTitle">${escapeHtml(n.title)}</div>
-        <div class="dataVal">${escapeHtml(n.url)}</div>
+        <div class="dataKey nubeTitle">${escapeHtml(n.project)}</div>
+        <div class="dataVal nubeMeta">${escapeHtml(n.area)}</div>
       </div>
       <button class="copyBtn" type="button" data-copylink="${i}">Copiar link</button>
     </div>
   `).join("");
 
   return `
-    <p>Accesos a nubes por área. Filtrá y entrá directo, o copiá el link.</p>
-    <div class="chipBar">${chips}</div>
+    <p>Accesos a nubes por área y proyecto. Filtrá, entrá directo o copiá el link.</p>
+    <div class="nubesTop">
+      <div class="chipBar">${chips}</div>
+      <div class="nubesProject">
+        <select id="nubesProject" class="control controlSm" aria-label="Proyecto">
+          ${projectOpts}
+        </select>
+      </div>
+    </div>
     <div class="dataGrid" id="nubesGrid">${rows}</div>
   `;
 }
+
 
 /* =========
    Menu
@@ -350,6 +383,73 @@ const modalExtra = document.getElementById("modalExtra");
 const modalFooter = document.querySelector(".modalFooter");
 const toast = document.getElementById("toast");
 
+/* =========
+   Contexto usuario (local)
+========= */
+const ctxBar = document.getElementById("ctxBar");
+const ctxProject = document.getElementById("ctxProject");
+const ctxArea = document.getElementById("ctxArea");
+
+const LS_PROFILE_PROJECT = "gb_profile_project";
+const LS_PROFILE_AREA = "gb_profile_area";
+const LS_NUBES_PROJECT = "gb_nubes_project";
+const LS_NUBES_AREA = "gb_nubes_area";
+
+function lsGet(key){
+  try { return localStorage.getItem(key) || ""; } catch(e){ return ""; }
+}
+function lsSet(key, val){
+  try {
+    if (val) localStorage.setItem(key, val);
+    else localStorage.removeItem(key);
+  } catch(e){}
+}
+function getProfile(){
+  return { project: lsGet(LS_PROFILE_PROJECT), area: lsGet(LS_PROFILE_AREA) };
+}
+
+function initCtxBar(){
+  if (!ctxBar || !ctxProject || !ctxArea) return;
+
+  ctxProject.innerHTML =
+    `<option value="">PROYECTO (OPCIONAL)</option>` +
+    PROJECTS.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join("");
+
+  ctxArea.innerHTML =
+    `<option value="">ÁREA (OPCIONAL)</option>` +
+    AREAS.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join("");
+
+  const sync = () => {
+    const prof = getProfile();
+    ctxProject.value = PROJECTS.includes(prof.project) ? prof.project : "";
+    ctxArea.value = AREAS.includes(prof.area) ? prof.area : "";
+  };
+
+  sync();
+  window.__syncCtxBar = sync;
+
+  ctxProject.addEventListener("change", () => {
+    const val = ctxProject.value || "";
+    lsSet(LS_PROFILE_PROJECT, val);
+    showToast(val ? `Proyecto: ${val}` : "Proyecto: sin seleccionar");
+  });
+
+  ctxArea.addEventListener("change", () => {
+    const val = ctxArea.value || "";
+    lsSet(LS_PROFILE_AREA, val);
+    showToast(val ? `Área: ${val}` : "Área: sin seleccionar");
+  });
+}
+
+function updateCtxBarVisibility(){
+  if (!ctxBar) return;
+  const theme = document.body.dataset.section || "";
+  const show = theme === "produccion";
+  ctxBar.classList.toggle("hidden", !show);
+  if (show && window.__syncCtxBar) window.__syncCtxBar();
+}
+
+
 /**
  * stack items:
  * { screen: <object>, label: <string> }
@@ -416,6 +516,7 @@ function applyTheme(){
 function renderCurrent(){
   applyTheme();
   renderBreadcrumbs();
+  updateCtxBarVisibility();
 
   const current = stack[stack.length - 1].screen;
 
@@ -460,7 +561,8 @@ function renderBreadcrumbs(){
       if (idx === stack.length - 1) return;
       stack = stack.slice(0, idx + 1);
       closeModal();
-      renderCurrent();
+      initCtxBar();
+renderCurrent();
     });
 
     breadcrumbBar.appendChild(btn);
@@ -469,7 +571,8 @@ function renderBreadcrumbs(){
 
 function pushScreen(screen, label){
   stack.push({ screen, label });
-  renderCurrent();
+  initCtxBar();
+renderCurrent();
 }
 
 function onItemClick(item){
@@ -617,6 +720,11 @@ function initArmadoMailUI(preset = {}){
     btnCopySubject.disabled = !ok;
   };
 
+  // Prefill desde contexto (si el usuario lo cargó arriba)
+  const prof = getProfile();
+  if (!preset.project && PROJECTS.includes(prof.project)) elProject.value = prof.project;
+  if (!preset.area && AREAS.includes(prof.area)) elArea.value = prof.area;
+
   // Presets (por ejemplo, categoría por defecto)
   if (preset.project) elProject.value = preset.project;
   if (preset.area) elArea.value = preset.area;
@@ -669,24 +777,63 @@ function openNubesModal(){
 function initNubesUI(){
   const chips = Array.from(modalBody.querySelectorAll("[data-nube-filter]"));
   const rows = Array.from(modalBody.querySelectorAll("[data-nube-area]"));
+  const selProject = modalBody.querySelector("#nubesProject");
 
-  const setActive = (val) => {
-    chips.forEach(c => c.classList.toggle("active", c.getAttribute("data-nube-filter") === val));
+  const prof = getProfile();
+  const savedArea = lsGet(LS_NUBES_AREA);
+  const savedProject = lsGet(LS_NUBES_PROJECT);
+
+  const normalizeAreaDefault = (val) => {
+    if (!val) return "TODOS";
+    if (val === "Produccion") return "PRODUCCIÓN";
+    if (val === "PRODUCCIÓN" || val === "ARTE" || val === "VESTUARIO") return val;
+    return "TODOS";
+  };
+
+  const getDefaultArea = () => normalizeAreaDefault(savedArea || prof.area);
+  const getDefaultProject = () => {
+    const v = savedProject || prof.project;
+    return PROJECTS.includes(v) ? v : "TODOS";
+  };
+
+  let activeArea = getDefaultArea();
+  let activeProject = getDefaultProject();
+
+  const apply = () => {
+    chips.forEach(c => c.classList.toggle("active", c.getAttribute("data-nube-filter") === activeArea));
     rows.forEach(r => {
       const area = r.getAttribute("data-nube-area");
-      const show = (val === "Todos") || (area === val);
-      r.classList.toggle("collapsed", !show);
+      const project = r.getAttribute("data-nube-project");
+      const showArea = (activeArea === "TODOS") || (area === activeArea);
+      const showProject = (activeProject === "TODOS") || (project === activeProject);
+      r.classList.toggle("collapsed", !(showArea && showProject));
     });
   };
 
-  // Click chips
+  // Chips: área
   chips.forEach(c => {
-    c.addEventListener("click", () => setActive(c.getAttribute("data-nube-filter")));
+    c.addEventListener("click", () => {
+      activeArea = c.getAttribute("data-nube-filter");
+      lsSet(LS_NUBES_AREA, activeArea === "TODOS" ? "" : activeArea);
+      apply();
+    });
   });
+
+  // Select: proyecto
+  if (selProject){
+    selProject.value = activeProject;
+    selProject.addEventListener("change", () => {
+      activeProject = selProject.value || "TODOS";
+      lsSet(LS_NUBES_PROJECT, activeProject === "TODOS" ? "" : activeProject);
+      apply();
+    });
+  }
 
   // Click row -> open link
   rows.forEach(r => {
-    r.addEventListener("click", () => {
+    r.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-copylink]");
+      if (btn) return;
       const url = r.getAttribute("data-nube-url");
       if (url) openExternal(url, "Nube");
     });
@@ -698,7 +845,12 @@ function initNubesUI(){
   });
 
   // Default
-  setActive("Todos");
+  activeArea = activeArea || "TODOS";
+  if (!chips.some(c => c.getAttribute("data-nube-filter") === activeArea)) activeArea = "TODOS";
+  activeProject = activeProject || "TODOS";
+  if (selProject) selProject.value = activeProject;
+
+  apply();
 }
 /* =========
    Datos empresa
@@ -848,16 +1000,27 @@ document.addEventListener("click", (e) => {
 /* =========
    Init
 ========= */
+initCtxBar();
 renderCurrent();
 
-// Copiar links placeholder (nubes)
+// Copiar links (Nubes)
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest("[data-copylink]");
   if (!btn) return;
+
   const row = btn.closest(".dataRow");
+  const url = row?.getAttribute("data-nube-url") || row?.dataset?.nubeUrl || "";
+
+  if (url){
+    await copyText(url);
+    showToast("Copiado: link");
+    return;
+  }
+
+  // Fallback: intenta leer un valor visible
   const val = row?.querySelector(".dataVal")?.textContent?.trim();
   if (val){
     await copyText(val);
-    showToast("Copiado: link");
+    showToast("Copiado");
   }
 });
