@@ -257,6 +257,13 @@ const MENU = {
               kicker: "Producción",
               body: rendicionBody(),
               primary: { label: "MODELO", onClick: () => openExternal(LINKS.modelo_rendicion, "Modelo de Rendición") },
+              extra: {
+                label: "COMUNICACIÓN POR MAIL",
+                onClick: () => {
+                  closeModal();
+                  openArmadoMailModal({ category: "RENDICIÓN" });
+                }
+              },
               secondary: { label: "Cerrar", onClick: closeModal }
             }
           },
@@ -561,8 +568,6 @@ function setupModalButtons(primary, secondary, extra){
   setBtn(modalPrimary, primary, "Acción");
   setBtn(modalExtra, extra, "Acción");
   setBtn(modalSecondary, secondary, "Cerrar");
-
-  applyFooterLayout();
 }
 
 /* =========
