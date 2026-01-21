@@ -85,66 +85,12 @@ function efectivoBody(){
 }
 
 function armadoMailBody(){
-  // escapeHtml está hoisted (function declaration), así que se puede usar acá.
   return `
-    <p>Completá estos datos y copiá el <strong>Asunto</strong> y el <strong>cuerpo</strong> del mail.</p>
-
-    <div class="formGrid">
-      <div class="field" id="amFieldProject">
-        <div class="fieldLabel">Proyecto</div>
-        <select class="control" id="amProject">
-          <option value="LA CASONA">LA CASONA</option>
-          <option value="JUBILADA Y PELIGROSA">JUBILADA Y PELIGROSA</option>
-        </select>
-      </div>
-
-      <div class="field" id="amFieldArea">
-        <div class="fieldLabel">Área</div>
-        <select class="control" id="amArea">
-          <option value="PRODUCCIÓN">PRODUCCIÓN</option>
-          <option value="ARTE">ARTE</option>
-          <option value="VESTUARIO">VESTUARIO</option>
-          <option value="LEGALES">LEGALES</option>
-        </select>
-      </div>
-
-
-      <div class="field" id="amFieldCategory">
-        <div class="fieldLabel">Categoría</div>
-        <select class="control" id="amCategory">
-          <option value="RENDICIÓN">RENDICIÓN</option>
-          <option value="PAGOS Y CONTRATOS">PAGOS Y CONTRATOS</option>
-          <option value="GARANTÍAS">GARANTÍAS</option>
-          <option value="EFECTIVO">EFECTIVO</option>
-        </select>
-      </div>
-
-      <div class="field" id="amFieldName">
-        <div class="fieldLabel">Nombre (quien rinde)</div>
-        <input class="control" id="amName" type="text" placeholder="Nombre y Apellido" autocomplete="name" />
-      </div>
-    </div>
-
-    <div id="amHint" class="hint warn hidden">Cargá el nombre para que el asunto quede completo.</div>
-
-    <div class="outGrid">
-      <div class="outCard">
-        <div class="outHeader">
-          <div>
-            <div class="outK">Asunto</div>
-            <div id="amSubject" class="outVal mono"></div>
-          </div>
-          <button class="copyBtn" type="button" id="amCopySubject">Copiar</button>
-        </div>
-      </div>
-
-      <div class="recRow">
-        <button class="copyBtn" type="button" id="amCopyTo">Copiar mails</button>
-        <div class="recDesc">Copiar a ${escapeHtml(EMAILS.to1)} y ${escapeHtml(EMAILS.to2)}</div>
-      </div>
-    </div>
+    <p><strong>Por favor comunicar por mail</strong>, dentro de la cadena correcta, las diferentes necesidades que vayan teniendo o las rendiciones correspondientes.</p>
+    <p>Si no existiera la cadena que necesitan entonces solicitarla a Tomas y Ame. Mails en el botón de abajo.</p>
   `;
 }
+
 
 function nubesBody(){
   const chips = ["TODOS", ...AREAS_NUBES].map((c, i) => `
@@ -679,13 +625,20 @@ function setupModalButtons(primary, secondary, extra){
 function openArmadoMailModal(preset = {}){
   openModal({
     title: "Comunicación por Mail",
-    kicker: "Producción",
+    kicker: "",
     bodyHtml: armadoMailBody(),
     actionsAlign: "left",
+    primary: {
+      label: "COPIAR MAILS",
+      onClick: async () => {
+        await copyText(`${EMAILS.to1}, ${EMAILS.to2}`);
+        showToast("Copiado: mails");
+      }
+    },
     secondary: { label: "Cerrar", onClick: closeModal }
   });
-  initArmadoMailUI(preset);
 }
+
 
 function initArmadoMailUI(preset = {}){
   const elProject = modalBody.querySelector("#amProject");
