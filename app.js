@@ -4,9 +4,8 @@
 
 const LINKS = {
   // Contratos
-  nda: "https://docs.google.com/document/d/1xo2ibL-DJaxytpSM6mqWRFiP-nLEkYTV/edit?usp=drive_link&ouid=101597232098541922085&rtpof=true&sd=true",
-  trabajo: "https://docs.google.com/document/d/12RAj-Tu5ec1F90jeAtAFhM2T2sFh0Lln/edit?usp=sharing&ouid=101597232098541922085&rtpof=true&sd=true",
-  ip: "https://docs.google.com/document/d/1EycBkBryI1VKB7CxSunkGGDcVeo9c6uN/edit?usp=sharing&ouid=101597232098541922085&rtpof=true&sd=true",
+  nda_casona: "https://drive.google.com/file/d/1l68VtmCQlDXKVmDaoZeNX_WH4JH_N5e2/view?usp=sharing",
+  nda_jubilada: "https://drive.google.com/file/d/1Mv2dO3Vj4EFFDGi9j_dF5qxuydp9ynMG/view?usp=sharing",
 
   // Alta Proveedor
   alta_personas: "https://forms.clickup.com/31001374/f/xj2ry-9334/19VWKHJ9W4BQ4BDYG8",
@@ -85,12 +84,66 @@ function efectivoBody(){
 }
 
 function armadoMailBody(){
+  // escapeHtml está hoisted (function declaration), así que se puede usar acá.
   return `
-    <p><strong>Por favor comunicar por mail</strong>, dentro de la cadena correcta, las diferentes necesidades que vayan teniendo o las rendiciones correspondientes.</p>
-    <p>Si no existiera la cadena que necesitan entonces solicitarla a Tomas y Ame. Mails en el botón de abajo.</p>
+    <p>Completá estos datos y copiá el <strong>Asunto</strong> y el <strong>cuerpo</strong> del mail.</p>
+
+    <div class="formGrid">
+      <div class="field" id="amFieldProject">
+        <div class="fieldLabel">Proyecto</div>
+        <select class="control" id="amProject">
+          <option value="LA CASONA">LA CASONA</option>
+          <option value="JUBILADA Y PELIGROSA">JUBILADA Y PELIGROSA</option>
+        </select>
+      </div>
+
+      <div class="field" id="amFieldArea">
+        <div class="fieldLabel">Área</div>
+        <select class="control" id="amArea">
+          <option value="PRODUCCIÓN">PRODUCCIÓN</option>
+          <option value="ARTE">ARTE</option>
+          <option value="VESTUARIO">VESTUARIO</option>
+          <option value="LEGALES">LEGALES</option>
+        </select>
+      </div>
+
+
+      <div class="field" id="amFieldCategory">
+        <div class="fieldLabel">Categoría</div>
+        <select class="control" id="amCategory">
+          <option value="RENDICIÓN">RENDICIÓN</option>
+          <option value="PAGOS Y CONTRATOS">PAGOS Y CONTRATOS</option>
+          <option value="GARANTÍAS">GARANTÍAS</option>
+          <option value="EFECTIVO">EFECTIVO</option>
+        </select>
+      </div>
+
+      <div class="field" id="amFieldName">
+        <div class="fieldLabel">Nombre (quien rinde)</div>
+        <input class="control" id="amName" type="text" placeholder="Nombre y Apellido" autocomplete="name" />
+      </div>
+    </div>
+
+    <div id="amHint" class="hint warn hidden">Cargá el nombre para que el asunto quede completo.</div>
+
+    <div class="outGrid">
+      <div class="outCard">
+        <div class="outHeader">
+          <div>
+            <div class="outK">Asunto</div>
+            <div id="amSubject" class="outVal mono"></div>
+          </div>
+          <button class="copyBtn" type="button" id="amCopySubject">Copiar</button>
+        </div>
+      </div>
+
+      <div class="recRow">
+        <button class="copyBtn" type="button" id="amCopyTo">Copiar mails</button>
+        <div class="recDesc">Copiar a ${escapeHtml(EMAILS.to1)} y ${escapeHtml(EMAILS.to2)}</div>
+      </div>
+    </div>
   `;
 }
-
 
 function nubesBody(){
   const chips = ["TODOS", ...AREAS_NUBES].map((c, i) => `
@@ -187,9 +240,18 @@ const MENU = {
             badge: "Ver",
             children: {
               items: [
-                { id: "ct", title: "Contrato de Trabajo", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.trabajo },
-                { id: "nda", title: "NDA", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.nda },
-                { id: "cip", title: "Cesión de IP", desc: "Abrir documento", badge: "Drive", badgeAlt: true, url: LINKS.ip },
+                {
+                  id: "nda",
+                  title: "NDA",
+                  desc: "Elegí el proyecto",
+                  badge: "Ver",
+                  children: {
+                    items: [
+                      { id: "nda_lc", title: "LA CASONA", desc: "Abrir NDA", badge: "Drive", badgeAlt: true, url: LINKS.nda_casona },
+                      { id: "nda_jp", title: "JUBILADA Y PELIGROSA", desc: "Abrir NDA", badge: "Drive", badgeAlt: true, url: LINKS.nda_jubilada },
+                    ]
+                  }
+                },
               ]
             }
           },
@@ -432,6 +494,8 @@ const ICON_BY_ID = {
   contratos: "fileText",
   ct: "fileText",
   nda: "lock",
+  nda_lc: "lock",
+  nda_jp: "lock",
   cip: "copyright",
   facturacion: "receipt",
 
@@ -625,20 +689,13 @@ function setupModalButtons(primary, secondary, extra){
 function openArmadoMailModal(preset = {}){
   openModal({
     title: "Comunicación por Mail",
-    kicker: "",
+    kicker: "Producción",
     bodyHtml: armadoMailBody(),
     actionsAlign: "left",
-    primary: {
-      label: "COPIAR MAILS",
-      onClick: async () => {
-        await copyText(`${EMAILS.to1}, ${EMAILS.to2}`);
-        showToast("Copiado: mails");
-      }
-    },
     secondary: { label: "Cerrar", onClick: closeModal }
   });
+  initArmadoMailUI(preset);
 }
-
 
 function initArmadoMailUI(preset = {}){
   const elProject = modalBody.querySelector("#amProject");
